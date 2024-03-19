@@ -24,7 +24,9 @@ import com.tobeto.entities.concretes.Category;
 @RestController
 @RequestMapping("api/v1/category")
 public class CategoriesController {
+ 
 
+ 
 	@Autowired
 	private CategoryService categoryService;
 
