@@ -16,23 +16,36 @@ public class SupplierManager implements SupplierService {
 	@Autowired
 	private SupplierRepository supplierRepository;
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
-	public void create(Supplier supplier) {
-		supplierRepository.save(supplier);
+	public Supplier create(Supplier supplier) {
+		return supplierRepository.save(supplier);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public List<Supplier> getAll() {
 		return supplierRepository.findAll();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		Supplier supplier = supplierRepository.findById(id).orElseThrow();
 		supplierRepository.delete(supplier);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
-	public void update(Supplier entity) {
+	public void update(Supplier supplier) {
+		supplierRepository.save(supplier);
 	}
 }

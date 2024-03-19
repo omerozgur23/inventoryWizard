@@ -7,4 +7,6 @@ import com.tobeto.entities.concretes.User;
 public interface UserService extends BaseService<User> {
 	Optional<User> getUser(String email);
 
+	String getUserRoles(User user);
+
 }

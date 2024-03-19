@@ -24,12 +24,9 @@ public class ShelfsController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
-//	@PostMapping("/create")
-//	public void create(@RequestBody CreateShelfRequest request) {
-//		Shelf shelf = modelMapper.forRequest().map(request, Shelf.class);
-//		shelfService.create(shelf);
-//	}
-
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@GetMapping("/getall")
 	public ResponseEntity<List<GetAllShelfResponse>> getAll() {
 		List<Shelf> shelfs = shelfService.getAll();
@@ -40,8 +37,4 @@ public class ShelfsController {
 		return ResponseEntity.ok(result);
 	}
 
-//	@PostMapping("/delete")
-//	public void delete(@RequestBody UUID id) {
-//		shelfService.delete(id);
-//	}
 }
