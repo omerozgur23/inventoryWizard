@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.ProductService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
+import com.tobeto.dto.SuccessReponseDTO;
 import com.tobeto.dto.product.CreateProductRequest;
 import com.tobeto.dto.product.GetAllProductResponse;
 import com.tobeto.dto.product.ProductWithCategoryDTO;
@@ -31,12 +32,19 @@ public class ProductsController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@PostMapping("/create")
-	public void create(@RequestBody CreateProductRequest request) {
+	public SuccessReponseDTO create(@RequestBody CreateProductRequest request) {
 		Product product = modelMapper.forRequest().map(request, Product.class);
 		productService.create(product);
+		return new SuccessReponseDTO();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@GetMapping("/getall")
 	public ResponseEntity<List<GetAllProductResponse>> getAll() {
 		List<Product> products = productService.getAll();
@@ -47,19 +55,30 @@ public class ProductsController {
 		return ResponseEntity.ok(result);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@GetMapping("/getProductWithCategoryDetails")
 	public List<ProductWithCategoryDTO> getProductWithCategoryDetails() {
 		return productService.getProductWithCategoryDetails();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@PostMapping("/delete")
-	public void delete(@RequestBody UUID id) {
+	public SuccessReponseDTO delete(@RequestBody UUID id) {
 		productService.delete(id);
+		return new SuccessReponseDTO();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@PutMapping("/update")
-	public void update(UpdateProductRequest request) {
+	public SuccessReponseDTO update(UpdateProductRequest request) {
 		Product product = this.modelMapper.forRequest().map(request, Product.class);
 		productService.update(product);
+		return new SuccessReponseDTO();
 	}
 }

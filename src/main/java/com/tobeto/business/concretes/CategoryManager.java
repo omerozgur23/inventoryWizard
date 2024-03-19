@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.CategoryService;
 import com.tobeto.business.abstracts.ShelfService;
+import com.tobeto.business.rules.category.CategoryBusinessRules;
 import com.tobeto.dataAccess.CategoryRepository;
 import com.tobeto.entities.concretes.Category;
 import com.tobeto.entities.concretes.Shelf;
@@ -18,31 +19,36 @@ public class CategoryManager implements CategoryService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-//	@Autowired
-//	private CategoryRules categoryRules;
+	@Autowired
+	private CategoryBusinessRules categoryBusinessRules;
 
 	@Autowired
 	private ShelfService shelfService;
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
-	public void create(Category category) {
-		if (!categoryRepository.existsByCategoryName(category.getCategoryName())) {
-			categoryRepository.save(category);
-			Shelf shelf = new Shelf(null, 0, 5, category);
-			shelfService.create(shelf);
-		}
-//		categoryRules.existsByCategoryName(category.getCategoryName());
-//		categoryRepository.save(category);
-//		Shelf shelf = new Shelf(null, 0, 5, category);
-//		shelfService.create(shelf);
+	public Category create(Category category) {
+		categoryBusinessRules.checkIfCategoryNameExist(category.getCategoryName());
+		categoryRepository.save(category);
 
+		Shelf shelf = new Shelf(null, 0, 5, category);
+		shelfService.create(shelf);
+		return null;
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public List<Category> getAll() {
 		return categoryRepository.findAll();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		Category category = categoryRepository.findById(id).orElseThrow();
@@ -50,9 +56,12 @@ public class CategoryManager implements CategoryService {
 		categoryRepository.delete(category);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
-	public void update(Category entity) {
-		// TODO Auto-generated method stub
+	public void update(Category category) {
+		categoryRepository.save(category);
 	}
 
 }
