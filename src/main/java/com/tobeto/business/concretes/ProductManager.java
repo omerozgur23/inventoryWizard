@@ -17,27 +17,42 @@ public class ProductManager implements ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
-	public void create(Product product) {
-		productRepository.save(product);
+	public Product create(Product product) {
+		return productRepository.save(product);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public List<Product> getAll() {
 		return productRepository.findAll();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public List<ProductWithCategoryDTO> getProductWithCategoryDetails() {
 		return productRepository.getProductWithCategoryDetails();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		Product product = productRepository.findById(id).orElseThrow();
 		productRepository.delete(product);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public void update(Product product) {
 		productRepository.save(product);

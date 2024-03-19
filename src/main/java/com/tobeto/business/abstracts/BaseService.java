@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BaseService<T> {
-	void create(T entity);
+	T create(T entity);
 
 	List<T> getAll();
 

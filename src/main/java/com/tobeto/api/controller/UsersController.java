@@ -27,20 +27,26 @@ public class UsersController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@PostMapping("/create")
 	public void create(@RequestBody CreateUserRequest request) {
-		System.out.println(request);
 		User user = modelMapper.forRequest().map(request, User.class);
 		userService.create(user);
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	/**********************************************************************/
 	@GetMapping("/getall")
 	public ResponseEntity<List<GetAllUserResponse>> getAll() {
 		List<User> users = userService.getAll();
 		List<GetAllUserResponse> result = new ArrayList<>();
 		users.forEach(user -> {
 			GetAllUserResponse response = modelMapper.forResponse().map(user, GetAllUserResponse.class);
-			response.setRole(user.getRoles().get(0).getRole());
+
+			response.setRole(userService.getUserRoles(user));
 			result.add(response);
 		});
 		return ResponseEntity.ok(result);
