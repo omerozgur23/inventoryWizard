@@ -1,15 +1,16 @@
-package com.tobeto.dto.shelf;
+package com.tobeto.dto.product;
+
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class CreateShelfRequest {
-
+@NoArgsConstructor
+public class AcceptProductRequest {
+	private UUID productId;
 	private int count;
-	private int capacity;
 
 }
