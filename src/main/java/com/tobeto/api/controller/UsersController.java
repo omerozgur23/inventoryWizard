@@ -22,7 +22,6 @@ import com.tobeto.entities.concretes.User;
 public class UsersController {
 
 	// test github
-	// test 2
 
 	@Autowired
 	private UserService userService;
