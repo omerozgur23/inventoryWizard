@@ -1,4 +1,4 @@
-package com.tobeto.dto.shelf;
+package com.tobeto.dto.product;
 
 import java.util.UUID;
 
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllShelfResponse {
-	private UUID id;
+public class AcceptProductRequest {
+	private UUID productId;
 	private int count;
-	private int capacity;
-	private String productName;
+
 }

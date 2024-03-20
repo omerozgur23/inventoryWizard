@@ -1,11 +1,17 @@
 package com.tobeto.dataAccess;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.tobeto.entities.concretes.Shelf;
 
 public interface ShelfRepository extends JpaRepository<Shelf, UUID> {
-	Shelf findByCategoryId(UUID id);
+	@Query("SELECT s FROM Shelf s WHERE s.product.id = :productId and s.count < s.capacity")
+	Optional<Shelf> findByProductIdNotFull(UUID productId);
+
+	List<Shelf> findAllByCount(int count);
 }
