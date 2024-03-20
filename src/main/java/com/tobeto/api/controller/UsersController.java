@@ -21,9 +21,6 @@ import com.tobeto.entities.concretes.User;
 @RequestMapping("/api/v1/user")
 public class UsersController {
 
-
-	//test branch
-
 	@Autowired
 	private UserService userService;
 
