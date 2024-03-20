@@ -31,6 +31,9 @@ public class Shelf {
 	private int capacity;
 
 	@ManyToOne
-//	@JoinColumn(name = "category_id")
-	private Category category;
+	private Product product;
+
+//	@ManyToOne
+////	@JoinColumn(name = "category_id")
+//	private Category category;
 }
