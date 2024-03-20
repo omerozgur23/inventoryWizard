@@ -37,8 +37,8 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-		Shelf shelf = shelfRepository.findByCategoryId(id);
-		shelfRepository.delete(shelf);
+//		
+//		shelfRepository.delete(shelf);
 	}
 
 	/**********************************************************************/
