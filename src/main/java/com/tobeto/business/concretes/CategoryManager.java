@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.CategoryService;
-import com.tobeto.business.abstracts.ShelfService;
 import com.tobeto.business.rules.category.CategoryBusinessRules;
 import com.tobeto.dataAccess.CategoryRepository;
 import com.tobeto.entities.concretes.Category;
-import com.tobeto.entities.concretes.Shelf;
 
 @Service
 public class CategoryManager implements CategoryService {
@@ -22,9 +20,6 @@ public class CategoryManager implements CategoryService {
 	@Autowired
 	private CategoryBusinessRules categoryBusinessRules;
 
-	@Autowired
-	private ShelfService shelfService;
-
 	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
@@ -33,8 +28,6 @@ public class CategoryManager implements CategoryService {
 		categoryBusinessRules.checkIfCategoryNameExist(category.getCategoryName());
 		categoryRepository.save(category);
 
-		Shelf shelf = new Shelf(null, 0, 5, category);
-		shelfService.create(shelf);
 		return null;
 	}
 
@@ -52,7 +45,6 @@ public class CategoryManager implements CategoryService {
 	@Override
 	public void delete(UUID id) {
 		Category category = categoryRepository.findById(id).orElseThrow();
-		shelfService.delete(id);
 		categoryRepository.delete(category);
 	}
 

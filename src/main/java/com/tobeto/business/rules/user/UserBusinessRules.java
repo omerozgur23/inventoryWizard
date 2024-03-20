@@ -19,7 +19,7 @@ public class UserBusinessRules {
 	public void checkIfEmailExist(String email) {
 		Optional<User> userOptional = userRepository.findByEmail(email);
 		if (userOptional.isPresent()) {
-			throw new BusinessException(Messages.userEmailAlreadyExists);
+			throw new BusinessException(Messages.USER_EMAIL_ALREADY_EXISTS);
 		}
 	}
 

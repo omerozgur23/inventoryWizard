@@ -30,7 +30,7 @@ public class CategoryBusinessRules {
 	/**********************************************************************/
 	public void checkIfByIdExists(UUID id) {
 		if (!categoryRepository.existsById(id)) {
-			throw new BusinessException(Messages.categoryIdNotFound);
+			throw new BusinessException(Messages.CATEGORY_ID_NOT_FOUND);
 		}
 	}
 }

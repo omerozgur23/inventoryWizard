@@ -50,7 +50,7 @@ public class Product {
 	@OneToMany(mappedBy = "product")
 	private List<OrderDetails> orderDetails;
 
-//	@OneToMany(mappedBy = "product")
-//	private List<Shelf> shelfs;
+	@OneToMany(mappedBy = "product")
+	private List<Shelf> shelfs;
 
 }
