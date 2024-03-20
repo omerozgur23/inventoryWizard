@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tobeto.business.abstracts.ProductService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
 import com.tobeto.dto.SuccessReponseDTO;
+import com.tobeto.dto.product.AcceptProductRequest;
 import com.tobeto.dto.product.CreateProductRequest;
 import com.tobeto.dto.product.GetAllProductResponse;
 import com.tobeto.dto.product.ProductWithCategoryDTO;
@@ -39,6 +40,12 @@ public class ProductsController {
 	public SuccessReponseDTO create(@RequestBody CreateProductRequest request) {
 		Product product = modelMapper.forRequest().map(request, Product.class);
 		productService.create(product);
+		return new SuccessReponseDTO();
+	}
+
+	@PostMapping("/accept")
+	public SuccessReponseDTO acceptFruit(@RequestBody AcceptProductRequest request) {
+		productService.acceptProduct(request.getProductId(), request.getCount());
 		return new SuccessReponseDTO();
 	}
 
