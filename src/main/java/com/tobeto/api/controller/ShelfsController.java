@@ -42,10 +42,10 @@ public class ShelfsController {
 	}
 
 	@PostMapping("/create")
-	public SuccessReponseDTO create(@RequestBody CreateShelfRequest request) {
+	public SuccessReponseDTO create(@RequestBody CreateShelfRequest request, int counter) {
 
 		Shelf shelf = modelMapper.forRequest().map(request, Shelf.class);
-		shelfService.create(shelf);
+		shelfService.create(shelf, counter);
 		return new SuccessReponseDTO();
 	}
 
