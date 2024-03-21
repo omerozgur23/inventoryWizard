@@ -20,15 +20,14 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public int create(Shelf shelf, int counter) {
+	public int create(int capacity, int counter) {
 		if (counter>20) {
 		  counter=20;	
 		}
 		
 		for (int i=0; i<counter; i++ )   {
 			 Shelf newShelf = new Shelf();
-			 newShelf.setCapacity(shelf.getCapacity());
-			 newShelf.setCount(shelf.getCount());
+			 newShelf.setCapacity(capacity);
 			 
 			 shelfRepository.save(newShelf);
 			 
