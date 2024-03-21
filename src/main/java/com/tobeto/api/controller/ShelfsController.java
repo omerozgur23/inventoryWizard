@@ -6,11 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.ShelfService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
+import com.tobeto.dto.SuccessReponseDTO;
+import com.tobeto.dto.shelf.CreateShelfRequest;
 import com.tobeto.dto.shelf.GetAllShelfResponse;
 import com.tobeto.entities.concretes.Shelf;
 
@@ -35,6 +39,13 @@ public class ShelfsController {
 			result.add(modelMapper.forResponse().map(shelf, GetAllShelfResponse.class));
 		});
 		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/create")
+	public SuccessReponseDTO create(@RequestBody CreateShelfRequest request) {
+
+		shelfService.create(request.getCapacity(), request.getCount());
+		return new SuccessReponseDTO();
 	}
 
 }

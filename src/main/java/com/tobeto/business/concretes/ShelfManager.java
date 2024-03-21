@@ -20,8 +20,21 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public Shelf create(Shelf shelf) {
-		return shelfRepository.save(shelf);
+	public int create(int capacity, int counter) {
+		if (counter>20) {
+		  counter=20;	
+		}
+		
+		for (int i=0; i<counter; i++ )   {
+			 Shelf newShelf = new Shelf();
+			 newShelf.setCapacity(capacity);
+			 
+			 shelfRepository.save(newShelf);
+			 
+			 
+		}
+		return counter; 
+		
 	}
 
 	/**********************************************************************/
