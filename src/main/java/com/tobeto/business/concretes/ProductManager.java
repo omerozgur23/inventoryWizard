@@ -88,7 +88,15 @@ public class ProductManager implements ProductService {
 	public void update(Product product) {
 		productRepository.save(product);
 	}
-
+	
+	private void saleProduct(UUID productId, int count)
+	{
+		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
+		if (oShelf.isPresent()) {
+			
+		}
+	}
+	
 	private Product getProduct(UUID productId) {
 		Optional<Product> oProduct = productRepository.findById(productId);
 		Product product = null;
@@ -100,6 +108,7 @@ public class ProductManager implements ProductService {
 		}
 		return product;
 	}
+	
 
 	private void bosShelfDoldur(int count, Product product) {
 		List<Shelf> emptyShelfs = shelfRepository.findAllByCount(0);

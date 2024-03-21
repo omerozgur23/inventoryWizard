@@ -7,7 +7,7 @@ import com.tobeto.entities.concretes.Shelf;
 
 public interface ShelfService  {
 	
-	int create(Shelf shelf, int counter);
+	int create(int capacity, int counter);
 
 	/**********************************************************************/
 	/**********************************************************************/
