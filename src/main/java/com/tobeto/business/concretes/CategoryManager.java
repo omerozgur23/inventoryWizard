@@ -22,24 +22,19 @@ public class CategoryManager implements CategoryService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Category create(Category category) {
 		categoryBusinessRules.checkIfCategoryNameExist(category.getCategoryName());
-		categoryRepository.save(category);
-
-		return null;
+		return categoryRepository.save(category);
 	}
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Category> getAll() {
-		return categoryRepository.findAll();
+	public Category update(Category category) {
+		return categoryRepository.save(category);
 	}
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
@@ -50,10 +45,8 @@ public class CategoryManager implements CategoryService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
-	public void update(Category category) {
-		categoryRepository.save(category);
+	public List<Category> getAll() {
+		return categoryRepository.findAll();
 	}
-
 }
