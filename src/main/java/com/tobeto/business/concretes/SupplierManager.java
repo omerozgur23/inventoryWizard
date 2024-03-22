@@ -18,7 +18,6 @@ public class SupplierManager implements SupplierService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Supplier create(Supplier supplier) {
 		return supplierRepository.save(supplier);
@@ -26,13 +25,11 @@ public class SupplierManager implements SupplierService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
-	public List<Supplier> getAll() {
-		return supplierRepository.findAll();
+	public Supplier update(Supplier supplier) {
+		return supplierRepository.save(supplier);
 	}
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
@@ -43,9 +40,8 @@ public class SupplierManager implements SupplierService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
-	public void update(Supplier supplier) {
-		supplierRepository.save(supplier);
+	public List<Supplier> getAll() {
+		return supplierRepository.findAll();
 	}
 }

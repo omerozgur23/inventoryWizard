@@ -39,7 +39,6 @@ public class UserManager implements UserService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Transactional
 	public Optional<User> getUser(String email) {
 		Optional<User> users = userRepository.findByEmail(email);
@@ -49,7 +48,6 @@ public class UserManager implements UserService {
 		return users;
 	}
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Transactional
@@ -69,7 +67,6 @@ public class UserManager implements UserService {
 
 	}
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
@@ -94,7 +91,6 @@ public class UserManager implements UserService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	public boolean changePassword(String lastPassword, String newPassword, String email) {
 		Optional<User> users = userRepository.findByEmail(email);
 		if (users.isPresent()) {
@@ -113,7 +109,6 @@ public class UserManager implements UserService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		User user = userRepository.findById(id).orElseThrow();
@@ -121,6 +116,7 @@ public class UserManager implements UserService {
 	}
 
 	@Override
-	public void update(User entity) {
+	public User update(User entity) {
+		return null;
 	}
 }
