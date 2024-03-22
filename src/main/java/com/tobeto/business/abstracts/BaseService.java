@@ -6,9 +6,9 @@ import java.util.UUID;
 public interface BaseService<T> {
 	T create(T entity);
 
-	List<T> getAll();
+	T update(T entity);
 
 	void delete(UUID id);
 
-	void update(T entity);
+	List<T> getAll();
 }

@@ -21,9 +21,6 @@ import com.tobeto.entities.concretes.User;
 @RequestMapping("/api/v1/user")
 public class UsersController {
 
-	// test github
-	// son test
-
 	@Autowired
 	private UserService userService;
 
@@ -32,14 +29,12 @@ public class UsersController {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/create")
 	public void create(@RequestBody CreateUserRequest request) {
 		User user = modelMapper.forRequest().map(request, User.class);
 		userService.create(user);
 	}
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")

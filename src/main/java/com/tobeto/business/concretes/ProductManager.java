@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.ProductService;
+import com.tobeto.business.rules.product.ProductBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
+import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
-import com.tobeto.dto.product.ProductWithCategoryDTO;
+import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.entities.concretes.Product;
-import com.tobeto.entities.concretes.Shelf;
 
 import jakarta.transaction.Transactional;
 
@@ -24,9 +25,11 @@ public class ProductManager implements ProductService {
 	private ProductRepository productRepository;
 
 	@Autowired
+	private ProductBusinessRules productBusinessRules;
+
+	@Autowired
 	private ShelfRepository shelfRepository;
 
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
@@ -34,45 +37,13 @@ public class ProductManager implements ProductService {
 		return productRepository.save(product);
 	}
 
-	@Transactional
-	public void acceptProduct(UUID productId, int count) {
-		Product product = getProduct(productId);
-		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
-		if (oShelf.isPresent()) {
-			// yarı dolu box bulundu. İçine aldığı kadar fruit koyalım.
-			Shelf shelf = oShelf.get();
-			int konacakMiktar = count;
-			int boxIcindeKalanKisim = shelf.getCapacity() - shelf.getCount();
-			if (konacakMiktar > boxIcindeKalanKisim) {
-				konacakMiktar = boxIcindeKalanKisim;
-			}
-			shelf.setCount(shelf.getCount() + konacakMiktar);
-			shelfRepository.save(shelf);
-			count -= konacakMiktar;
-		}
-		// kalan fruit'ler varsa kalan boş box'lara doldurulacak.
-		if (count > 0) {
-			bosShelfDoldur(count, product);
-		}
-	}
-
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Product> getAll() {
-		return productRepository.findAll();
+	public Product update(Product product) {
+		return productRepository.save(product);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
-	/**********************************************************************/
-	@Override
-	public List<ProductWithCategoryDTO> getProductWithCategoryDetails() {
-		return productRepository.getProductWithCategoryDetails();
-	}
-
-	/**********************************************************************/
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
@@ -83,51 +54,99 @@ public class ProductManager implements ProductService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	/**********************************************************************/
 	@Override
-	public void update(Product product) {
-		productRepository.save(product);
+	public List<Product> getAll() {
+		return productRepository.findAll();
 	}
-	
-	private void saleProduct(UUID productId, int count)
-	{
-		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
-		if (oShelf.isPresent()) {
-			
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Transactional
+	public void acceptProduct(UUID productId, int count) {
+		Product product = getProduct(productId);
+		int[] remainingCount = new int[] { count };
+//		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
+//		if (oShelf.isPresent()) {
+//			// yarı dolu shelf bulundu. İçine aldığı kadar product koyalım.
+//			Shelf shelf = oShelf.get();
+//			int konacakMiktar = count;
+//			int boxIcindeKalanKisim = shelf.getCapacity() - shelf.getCount();
+//			if (konacakMiktar > boxIcindeKalanKisim) {
+//				konacakMiktar = boxIcindeKalanKisim;
+//			}
+//			shelf.setCount(shelf.getCount() + konacakMiktar);
+//			shelfRepository.save(shelf);
+//			count -= konacakMiktar;
+//		}
+//		if (count > 0) {
+//			fillEmptyShelves(count, product);
+//		}
+
+		// Yarı dolu bir rafta ürün kabul etme
+		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
+
+			int availableSpace = shelf.getCapacity() - shelf.getCount();
+			int quantityToAdd = Math.min(remainingCount[0], availableSpace);
+			shelf.setCount(shelf.getCount() + quantityToAdd);
+			shelfRepository.save(shelf);
+			remainingCount[0] -= quantityToAdd;
+		});
+
+		// Eğer hala ürün kaldıysa, boş rafları doldurma
+		if (remainingCount[0] > 0) {
+			productBusinessRules.fillEmptyShelves(remainingCount[0], product);
 		}
 	}
-	
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public void saleProduct(UUID productId, int count) {
+		Product product = getProduct(productId);
+		int[] remainingCount = new int[] { count };
+
+		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
+			int saleCount = Math.min(count, shelf.getCount());
+			shelf.setCount(shelf.getCount() - saleCount);
+
+			productBusinessRules.clearShelf(shelf);
+			shelfRepository.save(shelf);
+			remainingCount[0] -= saleCount;
+		});
+//		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
+//
+//		if (oShelf.isPresent()) {
+//			Shelf shelf = oShelf.get();
+//
+//			int saleCount = Math.min(count, shelf.getCount());
+//			shelf.setCount(shelf.getCount() - saleCount);
+//
+//			productBusinessRules.clearShelf(shelf);
+//			shelfRepository.save(shelf);
+//			count -= saleCount;
+//		}
+		if (remainingCount[0] > 0)
+			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public List<ProductWithCategoryResponse> getProductWithCategoryDetails() {
+		return productRepository.getProductWithCategoryDetails();
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
 	private Product getProduct(UUID productId) {
 		Optional<Product> oProduct = productRepository.findById(productId);
 		Product product = null;
 		if (oProduct.isPresent()) {
 			product = oProduct.get();
 		} else {
-			// fruit bulunamadı. hata ver
-			throw new BusinessException("Ürün Bulunamadı");
+			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
 		}
 		return product;
 	}
-	
 
-	private void bosShelfDoldur(int count, Product product) {
-		List<Shelf> emptyShelfs = shelfRepository.findAllByCount(0);
-		int siradakiIlkBosSirasi = 0;
-		while (count > 0) {
-			if (siradakiIlkBosSirasi >= emptyShelfs.size()) {
-				// elimizde doldurabileceğimiz boş raf kalmadı.
-				throw new BusinessException("Boş Raf Kalmadı");
-			}
-			Shelf shelf = emptyShelfs.get(siradakiIlkBosSirasi); // ilk boş kutu
-			shelf.setProduct(product);
-			int konacakMiktar = count;
-			if (konacakMiktar > shelf.getCapacity()) {
-				konacakMiktar = shelf.getCapacity();
-			}
-			shelf.setCount(konacakMiktar);
-			shelfRepository.save(shelf);
-			count -= konacakMiktar;
-			siradakiIlkBosSirasi++;
-		}
-	}
 }
