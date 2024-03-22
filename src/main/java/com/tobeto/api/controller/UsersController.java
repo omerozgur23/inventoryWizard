@@ -2,6 +2,7 @@ package com.tobeto.api.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.UserService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
+import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.user.CreateUserRequest;
 import com.tobeto.dto.user.GetAllUserResponse;
 import com.tobeto.entities.concretes.User;
@@ -48,5 +50,11 @@ public class UsersController {
 			result.add(response);
 		});
 		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/delete")
+	public SuccessResponse delete(@RequestBody UUID id) {
+		userService.delete(id);
+		return new SuccessResponse();
 	}
 }
