@@ -1,11 +1,13 @@
 package com.tobeto.dto.shelf;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
-public class CreateShelfRequest {
+public class UpdateShelfRequest {
 
-	private int count;
+	private UUID id;
 
 	private int capacity;
 }
