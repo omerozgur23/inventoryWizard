@@ -80,7 +80,8 @@ public class ProductsController {
 	/**********************************************************************/
 	@PostMapping("/sale")
 	public SuccessResponse saleProduct(@RequestBody SaleProductRequest request) {
-		productService.saleProduct(request.getProductId(), request.getCount());
+		productService.saleProduct(request.getProductId(), request.getCount(), request.getCustomerId(),
+				request.getUserId());
 		return new SuccessResponse();
 	}
 
