@@ -13,4 +13,6 @@ public interface ProductService extends BaseService<Product> {
 
 	void saleProduct(UUID productId, int count);
 
+	List<Product> getAllByPage(int pageNo, int pageSize);
+
 }
