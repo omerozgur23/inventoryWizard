@@ -39,12 +39,12 @@ public class CustomersController {
 	@PutMapping("/update")
 	public SuccessResponse update(@RequestBody UpdateCustomerRequest request) {
 		Customer customer = modelMapper.forRequest().map(request, Customer.class);
-		customerService.create(customer);
+		customerService.update(customer);
 		return new SuccessResponse();
 	}
 
 	@PostMapping("/delete")
-	public SuccessResponse delete(UUID id) {
+	public SuccessResponse delete(@RequestBody UUID id) {
 		customerService.delete(id);
 		return new SuccessResponse();
 	}

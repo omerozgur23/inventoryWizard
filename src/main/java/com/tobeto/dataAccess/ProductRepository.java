@@ -14,4 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
 	@Query("Select new com.tobeto.dto.product.ProductWithCategoryResponse(p.id, p.productName, c.categoryName) From Category c Inner Join c.products p")
 	List<ProductWithCategoryResponse> getProductWithCategoryDetails();
+
+//	List<Product> findAll(Pageable pageable);
+
 }

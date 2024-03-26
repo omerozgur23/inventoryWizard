@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.ProductService;
@@ -65,22 +67,6 @@ public class ProductManager implements ProductService {
 	public void acceptProduct(UUID productId, int count) {
 		Product product = getProduct(productId);
 		int[] remainingCount = new int[] { count };
-//		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
-//		if (oShelf.isPresent()) {
-//			// yarı dolu shelf bulundu. İçine aldığı kadar product koyalım.
-//			Shelf shelf = oShelf.get();
-//			int konacakMiktar = count;
-//			int boxIcindeKalanKisim = shelf.getCapacity() - shelf.getCount();
-//			if (konacakMiktar > boxIcindeKalanKisim) {
-//				konacakMiktar = boxIcindeKalanKisim;
-//			}
-//			shelf.setCount(shelf.getCount() + konacakMiktar);
-//			shelfRepository.save(shelf);
-//			count -= konacakMiktar;
-//		}
-//		if (count > 0) {
-//			fillEmptyShelves(count, product);
-//		}
 
 		// Yarı dolu bir rafta ürün kabul etme
 		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
@@ -113,18 +99,7 @@ public class ProductManager implements ProductService {
 			shelfRepository.save(shelf);
 			remainingCount[0] -= saleCount;
 		});
-//		Optional<Shelf> oShelf = shelfRepository.findByProductIdNotFull(productId);
-//
-//		if (oShelf.isPresent()) {
-//			Shelf shelf = oShelf.get();
-//
-//			int saleCount = Math.min(count, shelf.getCount());
-//			shelf.setCount(shelf.getCount() - saleCount);
-//
-//			productBusinessRules.clearShelf(shelf);
-//			shelfRepository.save(shelf);
-//			count -= saleCount;
-//		}
+
 		if (remainingCount[0] > 0)
 			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
 	}
@@ -147,6 +122,12 @@ public class ProductManager implements ProductService {
 			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
 		}
 		return product;
+	}
+
+	@Override
+	public List<Product> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return productRepository.findAll(pageable).getContent();
 	}
 
 }
