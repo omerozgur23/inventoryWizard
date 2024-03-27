@@ -10,4 +10,9 @@ public class SaleProductRequest {
 	private UUID productId;
 
 	private int count;
+
+	private UUID customerId;
+
+	private UUID userId;
+
 }
