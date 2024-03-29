@@ -11,39 +11,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tobeto.business.abstracts.SupplierService;
+import com.tobeto.business.abstracts.ShelfService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
 import com.tobeto.dto.SuccessResponse;
-import com.tobeto.dto.supplier.CreateSupplierRequest;
-import com.tobeto.dto.supplier.GetAllSupplierResponse;
-import com.tobeto.dto.supplier.UpdateSupplierRequest;
-import com.tobeto.entities.concretes.Supplier;
+import com.tobeto.dto.shelf.CreateShelfRequest;
+import com.tobeto.dto.shelf.GetAllShelfResponse;
+import com.tobeto.dto.shelf.UpdateShelfRequest;
+import com.tobeto.entities.concretes.Shelf;
 
 @RestController
-@RequestMapping("/api/v1/supplier")
-public class SuppliersController {
+@RequestMapping("/api/v1/shelf")
+public class ShelvesController {
 
 	@Autowired
-	private SupplierService supplierService;
+	private ShelfService shelfService;
 
 	@Autowired
 	private ModelMapperService modelMapper;
 
 	/**********************************************************************/
 	/**********************************************************************/
+//	@PostMapping("/create")
+//	public SuccessResponseDTO create(@RequestBody CreateShelfRequest request) {
+//		shelfService.create(request.getCapacity(), request.getCount());
+//		return new SuccessResponseDTO();
+//	}
 	@PostMapping("/create")
-	public SuccessResponse create(@RequestBody CreateSupplierRequest request) {
-		Supplier supplier = modelMapper.forRequest().map(request, Supplier.class);
-		supplierService.create(supplier);
+	public SuccessResponse create(@RequestBody CreateShelfRequest request) {
+		shelfService.create(modelMapper.forRequest().map(request, Shelf.class));
 		return new SuccessResponse();
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@PutMapping("/update")
-	public SuccessResponse update(@RequestBody UpdateSupplierRequest request) {
-		Supplier supplier = modelMapper.forRequest().map(request, Supplier.class);
-		supplierService.update(supplier);
+	public SuccessResponse update(@RequestBody UpdateShelfRequest request) {
+		Shelf shelf = modelMapper.forRequest().map(request, Shelf.class);
+		shelfService.update(shelf);
 		return new SuccessResponse();
 	}
 
@@ -51,16 +55,15 @@ public class SuppliersController {
 	/**********************************************************************/
 	@PostMapping("/delete")
 	public SuccessResponse delete(@RequestBody UUID id) {
-		supplierService.delete(id);
+		shelfService.delete(id);
 		return new SuccessResponse();
-	}
+	};
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")
-	public List<GetAllSupplierResponse> getAll() {
-		List<Supplier> suppliers = supplierService.getAll();
-		return suppliers.stream().map(supplier -> modelMapper.forResponse().map(supplier, GetAllSupplierResponse.class))
-				.toList();
+	public List<GetAllShelfResponse> getAll() {
+		List<Shelf> shelves = shelfService.getAll();
+		return shelves.stream().map(shelf -> modelMapper.forResponse().map(shelf, GetAllShelfResponse.class)).toList();
 	}
 }

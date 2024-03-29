@@ -1,13 +1,13 @@
 package com.tobeto.dto.user;
 
-import lombok.AllArgsConstructor;
+import java.util.UUID;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class GetAllUserResponse {
+
+	private UUID id;
 
 	private String firstName;
 
@@ -18,5 +18,4 @@ public class GetAllUserResponse {
 	private String password;
 
 	private String role;
-
 }

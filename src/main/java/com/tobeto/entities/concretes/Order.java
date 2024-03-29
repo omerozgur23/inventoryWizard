@@ -1,5 +1,6 @@
 package com.tobeto.entities.concretes;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class Order {
 	private User employee;
 
 	@Column(name = "order_date")
-	private String orderDate;
+	private Date orderDate;
 
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetails> orderDetails;

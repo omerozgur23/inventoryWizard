@@ -5,9 +5,14 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class AcceptProductRequest {
+public class SaleProductRequest {
 
 	private UUID productId;
 
 	private int count;
+
+	private UUID customerId;
+
+	private UUID userId;
+
 }
