@@ -15,4 +15,7 @@ public interface ProductService extends BaseService<Product> {
 
 	List<Product> getAllByPage(int pageNo, int pageSize);
 
+	/************************ search deneme *******************/
+	List<Product> getByProductNameStartsWith(String productName);
+
 }

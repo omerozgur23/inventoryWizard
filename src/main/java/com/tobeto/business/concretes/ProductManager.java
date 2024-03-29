@@ -192,4 +192,10 @@ public class ProductManager implements ProductService {
 		return productRepository.findAll(pageable).getContent();
 	}
 
+	/******************* search deneme *******************/
+	@Override
+	public List<Product> getByProductNameStartsWith(String productName) {
+		return productRepository.getByProductNameStartsWith(productName);
+	}
+
 }
