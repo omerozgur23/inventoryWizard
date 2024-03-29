@@ -18,6 +18,7 @@ import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.product.AcceptProductRequest;
 import com.tobeto.dto.product.CreateProductRequest;
 import com.tobeto.dto.product.GetAllProductResponse;
+import com.tobeto.dto.product.GetByProductNameStartsWithResponse;
 import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.dto.product.SaleProductRequest;
 import com.tobeto.dto.product.UpdateProductRequest;
@@ -97,6 +98,15 @@ public class ProductsController {
 			@RequestParam(defaultValue = "2") int pageSize) {
 		List<Product> productPage = productService.getAllByPage(pageNo, pageSize);
 		return productPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
+				.toList();
+	}
+
+	/**************************** search deneme *********************/
+	@GetMapping("/getByProductNameStartsWith")
+	public List<GetByProductNameStartsWithResponse> getByProductNameStartsWith(@RequestParam String productName) {
+		List<Product> products = productService.getByProductNameStartsWith(productName);
+		return products.stream()
+				.map(product -> modelMapper.forResponse().map(product, GetByProductNameStartsWithResponse.class))
 				.toList();
 	}
 }

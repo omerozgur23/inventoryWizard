@@ -17,4 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
 //	List<Product> findAll(Pageable pageable);
 
+	/****************** search deneme ******************/
+	List<Product> getByProductNameStartsWith(String productName);
+
 }
