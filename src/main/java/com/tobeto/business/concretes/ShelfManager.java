@@ -24,29 +24,7 @@ public class ShelfManager implements ShelfService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-//	@Override
-//	public int create(int capacity, int count) {
-//		long currentShelfCount = shelfRepository.count();
-//		if (currentShelfCount >= 5) {
-//			throw new BusinessException(Messages.WAREHOUSE_FULL);
-//		}
-//
-//		if (count > 5) {
-//			count = 5;
-//		}
-//
-//		int createdShelfCount = 0;
-//		for (int i = 0; i < count; i++) {
-//			if (currentShelfCount + createdShelfCount >= 5) {
-//				break;
-//			}
-//			Shelf newShelf = new Shelf();
-//			newShelf.setCapacity(capacity);
-//			shelfRepository.save(newShelf);
-//			createdShelfCount++;
-//		}
-//		return createdShelfCount;
-//	}
+
 	@Override
 	public Shelf create(Shelf shelf) {
 		long currentShelfCount = shelfRepository.count();

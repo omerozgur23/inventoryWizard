@@ -11,6 +11,11 @@ public interface ProductService extends BaseService<Product> {
 
 	void acceptProduct(UUID productId, int count);
 
-	void saleProduct(UUID productId, int count);
+	void saleProduct(UUID productId, int count, UUID customerId, UUID userId);
+
+	List<Product> getAllByPage(int pageNo, int pageSize);
+
+	/************************ search deneme *******************/
+	List<Product> getByProductNameStartsWith(String productName);
 
 }

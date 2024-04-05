@@ -30,9 +30,9 @@ public class CustomerManager implements CustomerService {
 
 	@Override
 	public Customer update(Customer customer) {
-		customerBusinessRules.checkIfCompanyNameExists(customer.getCompanyName());
-		customerBusinessRules.checkIfTaxNumberExists(customer.getTaxNumber());
-		customerBusinessRules.checkIfEmailExists(customer.getEmail());
+		Customer newCustomer = customerRepository.findById(customer.getId()).orElseThrow();
+		customer.setCompanyName(newCustomer.getCompanyName());
+		customer.setTaxNumber(newCustomer.getTaxNumber());
 		return customerRepository.save(customer);
 	}
 

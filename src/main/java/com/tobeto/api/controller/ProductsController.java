@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.ProductService;
@@ -17,6 +18,7 @@ import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.product.AcceptProductRequest;
 import com.tobeto.dto.product.CreateProductRequest;
 import com.tobeto.dto.product.GetAllProductResponse;
+import com.tobeto.dto.product.GetByProductNameStartsWithResponse;
 import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.dto.product.SaleProductRequest;
 import com.tobeto.dto.product.UpdateProductRequest;
@@ -79,7 +81,8 @@ public class ProductsController {
 	/**********************************************************************/
 	@PostMapping("/sale")
 	public SuccessResponse saleProduct(@RequestBody SaleProductRequest request) {
-		productService.saleProduct(request.getProductId(), request.getCount());
+		productService.saleProduct(request.getProductId(), request.getCount(), request.getCustomerId(),
+				request.getUserId());
 		return new SuccessResponse();
 	}
 
@@ -90,4 +93,20 @@ public class ProductsController {
 		return productService.getProductWithCategoryDetails();
 	}
 
+	@GetMapping("/getallByPage")
+	public List<GetAllProductResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "2") int pageSize) {
+		List<Product> productPage = productService.getAllByPage(pageNo, pageSize);
+		return productPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
+				.toList();
+	}
+
+	/**************************** search deneme *********************/
+	@GetMapping("/getByProductNameStartsWith")
+	public List<GetByProductNameStartsWithResponse> getByProductNameStartsWith(@RequestParam String productName) {
+		List<Product> products = productService.getByProductNameStartsWith(productName);
+		return products.stream()
+				.map(product -> modelMapper.forResponse().map(product, GetByProductNameStartsWithResponse.class))
+				.toList();
+	}
 }
