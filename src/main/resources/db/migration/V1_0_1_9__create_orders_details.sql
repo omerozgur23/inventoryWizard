@@ -4,6 +4,7 @@ CREATE TABLE order_details (
   `product_id` BINARY(16) NOT NULL,
   `quantity` INT NOT NULL,
   `unit_price` DECIMAL NOT NULL,
+  total_price DECIMAL NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `ord_det_ord_fk` (`order_id` ASC, `product_id` ASC),
   CONSTRAINT `det_or_or_fk`
