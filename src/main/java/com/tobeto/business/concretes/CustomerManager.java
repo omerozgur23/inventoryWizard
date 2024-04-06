@@ -1,6 +1,7 @@
 package com.tobeto.business.concretes;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.CustomerService;
 import com.tobeto.business.rules.customer.CustomerBusinessRules;
+import com.tobeto.core.utilities.exceptions.BusinessException;
+import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.CustomerRepository;
 import com.tobeto.entities.concretes.Customer;
 
@@ -47,4 +50,15 @@ public class CustomerManager implements CustomerService {
 		return customerRepository.findAll();
 	}
 
+	@Override
+	public Customer getCustomer(UUID customerId) {
+		Optional<Customer> oCustomer = customerRepository.findById(customerId);
+		Customer customer = null;
+		if (oCustomer.isPresent()) {
+			customer = oCustomer.get();
+		} else {
+			throw new BusinessException(Messages.CUSTOMER_ID_NOT_FOUND);
+		}
+		return customer;
+	}
 }

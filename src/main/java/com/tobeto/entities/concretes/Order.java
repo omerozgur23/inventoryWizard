@@ -1,6 +1,6 @@
 package com.tobeto.entities.concretes;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = "orders")
 public class Order {
 
@@ -37,7 +39,7 @@ public class Order {
 	private User employee;
 
 	@Column(name = "order_date")
-	private Date orderDate;
+	private LocalDateTime orderDate;
 
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetails> orderDetails;
