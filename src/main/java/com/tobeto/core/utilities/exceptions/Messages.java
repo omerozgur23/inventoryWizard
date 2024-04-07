@@ -11,6 +11,7 @@ public record Messages() {
 
 	// User Messages
 	public static final String USER_EMAIL_ALREADY_EXISTS = "User email already exists!";
+	public static final String USER_ID_NOT_FOUND = "User ID not found!";
 
 	// Shelf Messages
 	public static final String SHELF_ID_NOT_FOUND = "Shelf ID not found!";

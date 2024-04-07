@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.UserService;
 import com.tobeto.business.rules.user.UserBusinessRules;
+import com.tobeto.core.utilities.exceptions.BusinessException;
+import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.RolesRepository;
 import com.tobeto.dataAccess.UserRepository;
 import com.tobeto.entities.concretes.User;
@@ -118,5 +120,17 @@ public class UserManager implements UserService {
 	@Override
 	public User update(User entity) {
 		return null;
+	}
+
+	@Override
+	public User getUser(UUID userId) {
+		Optional<User> oUser = userRepository.findById(userId);
+		User user = null;
+		if (oUser.isPresent()) {
+			user = oUser.get();
+		} else {
+			throw new BusinessException(Messages.USER_ID_NOT_FOUND);
+		}
+		return user;
 	}
 }

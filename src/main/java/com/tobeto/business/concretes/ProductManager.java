@@ -1,6 +1,6 @@
 package com.tobeto.business.concretes;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,16 +10,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.tobeto.business.abstracts.CustomerService;
 import com.tobeto.business.abstracts.ProductService;
+import com.tobeto.business.abstracts.UserService;
 import com.tobeto.business.rules.product.ProductBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
-import com.tobeto.dataAccess.CustomerRepository;
 import com.tobeto.dataAccess.OrderDetailsRepository;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
-import com.tobeto.dataAccess.UserRepository;
 import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
@@ -36,22 +36,22 @@ public class ProductManager implements ProductService {
 	private ProductRepository productRepository;
 
 	@Autowired
-	private CustomerRepository customerRepository;
-
-	@Autowired
-	private OrderDetailsRepository orderDetailsRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProductBusinessRules productBusinessRules;
+	private ShelfRepository shelfRepository;
 
 	@Autowired
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private ShelfRepository shelfRepository;
+	private OrderDetailsRepository orderDetailsRepository;
+
+	@Autowired
+	private ProductBusinessRules productBusinessRules;
+
+	@Autowired
+	private CustomerService customerService;
+
+	@Autowired
+	private UserService userService;
 
 	/**********************************************************************/
 	/**********************************************************************/
@@ -112,8 +112,8 @@ public class ProductManager implements ProductService {
 	@Override
 	public void saleProduct(UUID productId, int count, UUID customerId, UUID userId) {
 		Product product = getProduct(productId);
-		Customer customer = getCustomer(customerId);
-		User user = getUser(userId);
+		Customer customer = customerService.getCustomer(customerId);
+		User user = userService.getUser(userId);
 		int[] remainingCount = new int[] { count };
 
 		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
@@ -129,18 +129,23 @@ public class ProductManager implements ProductService {
 		if (remainingCount[0] > 0)
 			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
 
-		Order order = new Order();
-		order.setCustomer(customer);
-		order.setEmployee(user);
-		order.setOrderDate(new Date(2024, 03, 26));
+//		Order order = new Order();
+//		order.setCustomer(customer);
+//		order.setEmployee(user);
+//		order.setOrderDate(LocalDateTime.now());
+//		orderRepository.save(order);
+		Order order = Order.builder().customer(customer).employee(user).orderDate(LocalDateTime.now()).build();
 		orderRepository.save(order);
 
-		OrderDetails od = new OrderDetails();
-		od.setOrder(orderRepository.findById(order.getId()).orElseThrow());
-		od.setProduct(product);
-		od.setQuantity(count);
-		od.setUnitPrice(product.getUnitPrice());
-		orderDetailsRepository.save(od);
+		OrderDetails orderDetail = OrderDetails.builder().order(orderRepository.findById(order.getId()).orElseThrow())
+				.product(product).quantity(count).unitPrice(product.getUnitPrice())
+				.totalPrice(count * product.getUnitPrice()).build();
+		orderDetailsRepository.save(orderDetail);
+//		od.setOrder(orderRepository.findById(order.getId()).orElseThrow());
+//		od.setProduct(product);
+//		od.setQuantity(count);
+//		od.setUnitPrice(product.getUnitPrice());
+//		orderDetailsRepository.save(od);
 
 	}
 
@@ -162,28 +167,6 @@ public class ProductManager implements ProductService {
 			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
 		}
 		return product;
-	}
-
-	private Customer getCustomer(UUID customerId) {
-		Optional<Customer> oCustomer = customerRepository.findById(customerId);
-		Customer customer = null;
-		if (oCustomer.isPresent()) {
-			customer = oCustomer.get();
-		} else {
-			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
-		}
-		return customer;
-	}
-
-	private User getUser(UUID userId) {
-		Optional<User> oUser = userRepository.findById(userId);
-		User user = null;
-		if (oUser.isPresent()) {
-			user = oUser.get();
-		} else {
-			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
-		}
-		return user;
 	}
 
 	@Override
