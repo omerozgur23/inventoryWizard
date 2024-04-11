@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.CategoryService;
@@ -31,7 +33,10 @@ public class CategoryManager implements CategoryService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public Category update(Category category) {
+	public Category update(Category clientCategory) {
+		Category category = categoryRepository.findById(clientCategory.getId()).orElseThrow();
+
+		category.setCategoryName(clientCategory.getCategoryName());
 		return categoryRepository.save(category);
 	}
 
@@ -48,5 +53,11 @@ public class CategoryManager implements CategoryService {
 	@Override
 	public List<Category> getAll() {
 		return categoryRepository.findAll();
+	}
+
+	@Override
+	public List<Category> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return categoryRepository.findAll(pageable).getContent();
 	}
 }
