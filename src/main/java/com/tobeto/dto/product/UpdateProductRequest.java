@@ -11,11 +11,11 @@ public class UpdateProductRequest {
 
 	private String productName;
 
-	private UUID categoryId;
+//	private UUID categoryId;
+//
+//	private UUID supplierId;
 
-	private UUID supplierId;
-
-	private int quantity;
+//	private int quantity;
 
 	private double purchasePrice;
 

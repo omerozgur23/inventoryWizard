@@ -63,7 +63,13 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public Product update(Product product) {
+	public Product update(Product clientProduct) {
+		Product product = productRepository.findById(clientProduct.getId()).orElseThrow();
+		product.setProductName(clientProduct.getProductName());
+//		product.setCategory(clientProduct.getCategory());
+//		product.setSupplier(clientProduct.getSupplier());
+		product.setPurchasePrice(clientProduct.getPurchasePrice());
+		product.setUnitPrice(clientProduct.getUnitPrice());
 		return productRepository.save(product);
 	}
 

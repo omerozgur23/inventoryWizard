@@ -19,7 +19,5 @@ public class UpdateSupplierRequest {
 
 	private String contactPhone;
 
-	private String taxNumber;
-
 	private String address;
 }
