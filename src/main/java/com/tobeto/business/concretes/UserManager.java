@@ -6,6 +6,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -132,5 +134,11 @@ public class UserManager implements UserService {
 			throw new BusinessException(Messages.USER_ID_NOT_FOUND);
 		}
 		return user;
+	}
+
+	@Override
+	public List<User> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return userRepository.findAll(pageable).getContent();
 	}
 }

@@ -46,7 +46,7 @@ public class ProductsController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@PutMapping("/update")
-	public SuccessResponse update(UpdateProductRequest request) {
+	public SuccessResponse update(@RequestBody UpdateProductRequest request) {
 		Product product = modelMapper.forRequest().map(request, Product.class);
 		productService.update(product);
 		return new SuccessResponse();

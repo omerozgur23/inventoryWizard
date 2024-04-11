@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.UserService;
@@ -56,5 +57,21 @@ public class UsersController {
 	public SuccessResponse delete(@RequestBody UUID id) {
 		userService.delete(id);
 		return new SuccessResponse();
+	}
+
+	@GetMapping("/getallByPage")
+	public ResponseEntity<List<GetAllUserResponse>> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "2") int pageSize) {
+		List<User> userPage = userService.getAllByPage(pageNo, pageSize);
+		List<GetAllUserResponse> result = new ArrayList<>();
+
+		userPage.forEach(user -> {
+			GetAllUserResponse response = modelMapper.forResponse().map(user, GetAllUserResponse.class);
+
+			response.setRole(userService.getUserRoles(user));
+			result.add(response);
+		});
+
+		return ResponseEntity.ok(result);
 	}
 }

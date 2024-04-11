@@ -11,4 +11,6 @@ public interface BaseService<T> {
 	void delete(UUID id);
 
 	List<T> getAll();
+
+	List<T> getAllByPage(int pageNo, int pageSize);
 }

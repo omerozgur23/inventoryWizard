@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.ShelfService;
@@ -52,8 +54,12 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public Shelf update(Shelf shelf) {
+	public Shelf update(Shelf clientShelf) {
+		Shelf shelf = shelfRepository.findById(clientShelf.getId()).orElseThrow();
+
+		shelf.setCapacity(clientShelf.getCapacity());
 		return shelfRepository.save(shelf);
+
 	}
 
 	/**********************************************************************/
@@ -69,5 +75,11 @@ public class ShelfManager implements ShelfService {
 	@Override
 	public List<Shelf> getAll() {
 		return shelfRepository.findAll();
+	}
+
+	@Override
+	public List<Shelf> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return shelfRepository.findAll(pageable).getContent();
 	}
 }

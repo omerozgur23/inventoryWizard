@@ -13,7 +13,11 @@ public class GetAllProductResponse {
 
 	private String categoryName;
 
+	private UUID categoryId;
+
 	private String supplierCompanyName;
+
+	private UUID supplierId;
 
 	private int quantity;
 

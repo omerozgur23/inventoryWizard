@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.CustomerService;
@@ -54,6 +55,14 @@ public class CustomersController {
 		List<Customer> customers = customerService.getAll();
 		return customers.stream().map(customer -> modelMapper.forResponse().map(customer, GetAllCustomerResponse.class))
 				.toList();
+	}
+
+	@GetMapping("/getallByPage")
+	public List<GetAllCustomerResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "2") int pageSize) {
+		List<Customer> customerPage = customerService.getAllByPage(pageNo, pageSize);
+		return customerPage.stream()
+				.map(product -> modelMapper.forResponse().map(product, GetAllCustomerResponse.class)).toList();
 	}
 
 }

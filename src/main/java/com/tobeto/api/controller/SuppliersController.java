@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.SupplierService;
@@ -62,5 +63,13 @@ public class SuppliersController {
 		List<Supplier> suppliers = supplierService.getAll();
 		return suppliers.stream().map(supplier -> modelMapper.forResponse().map(supplier, GetAllSupplierResponse.class))
 				.toList();
+	}
+
+	@GetMapping("/getallByPage")
+	public List<GetAllSupplierResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "2") int pageSize) {
+		List<Supplier> supplierPage = supplierService.getAllByPage(pageNo, pageSize);
+		return supplierPage.stream()
+				.map(product -> modelMapper.forResponse().map(product, GetAllSupplierResponse.class)).toList();
 	}
 }
