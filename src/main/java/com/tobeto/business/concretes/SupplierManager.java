@@ -32,6 +32,7 @@ public class SupplierManager implements SupplierService {
 		Supplier supplier = supplierRepository.findById(clientSupplier.getId()).orElseThrow();
 		supplier.setCompanyName(clientSupplier.getCompanyName());
 		supplier.setContactName(clientSupplier.getContactName());
+		supplier.setContactEmail(clientSupplier.getContactEmail());
 		supplier.setContactPhone(clientSupplier.getContactPhone());
 		supplier.setAddress(clientSupplier.getAddress());
 		return supplierRepository.save(supplier);
@@ -52,6 +53,8 @@ public class SupplierManager implements SupplierService {
 		return supplierRepository.findAll();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public List<Supplier> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);

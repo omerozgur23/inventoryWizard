@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.ProductService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
+import com.tobeto.dto.SaleRequest;
 import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.product.AcceptProductRequest;
 import com.tobeto.dto.product.CreateProductRequest;
@@ -109,4 +110,11 @@ public class ProductsController {
 				.map(product -> modelMapper.forResponse().map(product, GetByProductNameStartsWithResponse.class))
 				.toList();
 	}
+
+	@PostMapping("/saleTest")
+	public SuccessResponse saleProductTest(@RequestBody SaleRequest request) {
+		productService.saleProductTest(request.getProductItems(), request.getCustomerId(), request.getUserId());
+		return new SuccessResponse();
+	}
+
 }

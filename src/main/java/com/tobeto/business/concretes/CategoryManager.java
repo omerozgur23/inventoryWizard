@@ -26,8 +26,19 @@ public class CategoryManager implements CategoryService {
 	/**********************************************************************/
 	@Override
 	public Category create(Category category) {
-		categoryBusinessRules.checkIfCategoryNameExist(category.getCategoryName());
+
+		String formattedCategoryName = capitalizeFirstLetter(category.getCategoryName());
+
+		categoryBusinessRules.checkIfCategoryNameExist(formattedCategoryName);
+		category.setCategoryName(formattedCategoryName);
 		return categoryRepository.save(category);
+	}
+
+	private String capitalizeFirstLetter(String input) {
+		if (input == null || input.isEmpty()) {
+			return input;
+		}
+		return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
 	}
 
 	/**********************************************************************/
@@ -55,6 +66,8 @@ public class CategoryManager implements CategoryService {
 		return categoryRepository.findAll();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
 	@Override
 	public List<Category> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);

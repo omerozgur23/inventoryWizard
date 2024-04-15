@@ -9,7 +9,7 @@ public class CreateCustomerRequest {
 
 	private String contactName;
 
-	private String email;
+	private String contactEmail;
 
 	private String contactPhone;
 

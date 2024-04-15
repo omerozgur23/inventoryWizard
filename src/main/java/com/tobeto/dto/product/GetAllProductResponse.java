@@ -19,6 +19,8 @@ public class GetAllProductResponse {
 
 	private UUID supplierId;
 
+	private int criticalCount;
+
 	private int quantity;
 
 	private double purchasePrice;

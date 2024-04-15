@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CreateShelfRequest {
 
-	private int count;
-
 	private int capacity;
+
+	private int count;
 }
