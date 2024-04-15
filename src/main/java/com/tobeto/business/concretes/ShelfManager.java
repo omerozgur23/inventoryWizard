@@ -30,17 +30,17 @@ public class ShelfManager implements ShelfService {
 	@Override
 	public Shelf create(Shelf shelf) {
 		long currentShelfCount = shelfRepository.count();
-		if (currentShelfCount >= 5)
+		if (currentShelfCount >= 10)
 			throw new BusinessException(Messages.WAREHOUSE_FULL);
 
 		int count = shelf.getCount();
-		if (count > 5) {
-			count = 5;
+		if (count > 10) {
+			count = 10;
 		}
 
 		int createdShelfCount = 0;
 		for (int i = 0; i < count; i++) {
-			if (currentShelfCount + createdShelfCount >= 5) {
+			if (currentShelfCount + createdShelfCount >= 10) {
 				break;
 			}
 			Shelf newShelf = new Shelf();
@@ -66,8 +66,16 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-		shelfBusinessRules.checkIfByIdExists(id);
+//		shelfBusinessRules.checkIfShelfEmpty(id);
+//		shelfBusinessRules.checkIfByIdExists(id);
+
+		Shelf shelf = shelfRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(Messages.SHELF_ID_NOT_FOUND));
+
+		shelfBusinessRules.checkIfShelfEmpty(shelf);
+
 		shelfRepository.deleteById(id);
+
 	}
 
 	/**********************************************************************/

@@ -1,6 +1,5 @@
 package com.tobeto.dto.order;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Data;
@@ -14,5 +13,5 @@ public class GetAllOrderResponse {
 
 	private String employeeFirstName;
 
-	private LocalDateTime orderDate;
+	private String orderDate;
 }

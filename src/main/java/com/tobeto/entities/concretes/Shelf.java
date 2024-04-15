@@ -32,8 +32,4 @@ public class Shelf {
 
 	@ManyToOne
 	private Product product;
-
-//	@ManyToOne
-////	@JoinColumn(name = "category_id")
-//	private Category category;
 }

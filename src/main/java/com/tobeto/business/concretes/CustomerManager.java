@@ -29,7 +29,7 @@ public class CustomerManager implements CustomerService {
 	public Customer create(Customer customer) {
 		customerBusinessRules.checkIfCompanyNameExists(customer.getCompanyName());
 		customerBusinessRules.checkIfTaxNumberExists(customer.getTaxNumber());
-		customerBusinessRules.checkIfEmailExists(customer.getEmail());
+		customerBusinessRules.checkIfEmailExists(customer.getContactEmail());
 		return customerRepository.save(customer);
 	}
 
@@ -38,7 +38,7 @@ public class CustomerManager implements CustomerService {
 		Customer customer = customerRepository.findById(clientCustomer.getId()).orElseThrow();
 		customer.setCompanyName(clientCustomer.getCompanyName());
 		customer.setContactName(clientCustomer.getContactName());
-		customer.setEmail(clientCustomer.getEmail());
+		customer.setContactEmail(clientCustomer.getContactEmail());
 		customer.setContactPhone(clientCustomer.getContactPhone());
 		customer.setAddress(clientCustomer.getAddress());
 		return customerRepository.save(customer);

@@ -28,7 +28,7 @@ public class CustomerBusinessRules {
 	}
 
 	public void checkIfEmailExists(String email) {
-		if (customerRepository.existsByEmail(email)) {
+		if (customerRepository.existsByContactEmail(email)) {
 			throw new BusinessException(Messages.EMAIL_ALREADY_EXISTS);
 		}
 	}
