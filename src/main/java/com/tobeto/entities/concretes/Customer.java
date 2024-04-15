@@ -31,8 +31,8 @@ public class Customer {
 	@Column(name = "contact_name")
 	private String contactName;
 
-	@Column(name = "email")
-	private String email;
+	@Column(name = "contact_email")
+	private String contactEmail;
 
 	@Column(name = "contact_phone")
 	private String contactPhone;

@@ -43,6 +43,7 @@ public class UserManager implements UserService {
 
 	/**********************************************************************/
 	/**********************************************************************/
+	@Override
 	@Transactional
 	public Optional<User> getUser(String email) {
 		Optional<User> users = userRepository.findByEmail(email);
@@ -140,5 +141,10 @@ public class UserManager implements UserService {
 	public List<User> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		return userRepository.findAll(pageable).getContent();
+	}
+
+	@Override
+	public Optional<User> getUserByEmail(String email) {
+		return userRepository.findByEmail(email);
 	}
 }

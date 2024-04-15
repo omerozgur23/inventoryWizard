@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetAllCategoryResponse {
+
 	private UUID id;
+
 	private String name;
 
 	private List<GetAllProductResponse> products;

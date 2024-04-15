@@ -15,7 +15,7 @@ public class UpdateProductRequest {
 //
 //	private UUID supplierId;
 
-//	private int quantity;
+	private int criticalCount;
 
 	private double purchasePrice;
 

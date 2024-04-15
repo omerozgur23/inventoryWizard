@@ -33,9 +33,9 @@ public class ShelvesController {
 	/**********************************************************************/
 	/**********************************************************************/
 //	@PostMapping("/create")
-//	public SuccessResponseDTO create(@RequestBody CreateShelfRequest request) {
+//	public SuccessResponse create(@RequestBody CreateShelfRequest request) {
 //		shelfService.create(request.getCapacity(), request.getCount());
-//		return new SuccessResponseDTO();
+//		return new SuccessResponse();
 //	}
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateShelfRequest request) {
@@ -70,7 +70,7 @@ public class ShelvesController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllShelfResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "5") int pageSize) {
 		List<Shelf> shelfPage = shelfService.getAllByPage(pageNo, pageSize);
 		return shelfPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllShelfResponse.class))
 				.toList();

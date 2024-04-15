@@ -13,12 +13,12 @@ public class WebConfig {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-//				registry.addMapping("/**").allowedOrigins("*");
-				registry.addMapping("/**").allowedOrigins("http://localhost:4200") // İzin verilen origin (Angular
-																					// uygulamasının URL'si)
-						.allowedMethods("GET", "POST", "PUT", "DELETE") // İzin verilen HTTP metodları
-						.allowedHeaders("*") // İzin verilen başlıklar
-						.allowCredentials(true);
+				registry.addMapping("/**").allowedOrigins("*");
+//				registry.addMapping("/**").allowedOrigins("http://localhost:4200") // İzin verilen origin (Angular
+//																					// uygulamasının URL'si)
+//						.allowedMethods("GET", "POST", "PUT", "DELETE") // İzin verilen HTTP metodları
+//						.allowedHeaders("*") // İzin verilen başlıklar
+//						.allowCredentials(true);
 			}
 		};
 	}

@@ -12,9 +12,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,6 +39,9 @@ public class Product {
 
 	@Column(name = "product_name")
 	private String productName;
+
+	@Column(name = "critical_count")
+	private int criticalCount;
 
 	@Column(name = "quantity")
 	private int quantity;

@@ -13,9 +13,9 @@ public class CreateProductRequest {
 
 	private UUID supplierId;
 
-	private int quantity;
-
-	private double unitPrice;
+	private int criticalCount;
 
 	private double purchasePrice;
+
+	private double unitPrice;
 }

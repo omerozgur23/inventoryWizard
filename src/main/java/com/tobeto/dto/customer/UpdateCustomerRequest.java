@@ -13,11 +13,9 @@ public class UpdateCustomerRequest {
 
 	private String contactName;
 
-	private String email;
+	private String contactEmail;
 
 	private String contactPhone;
-
-//	private String taxNumber;
 
 	private String address;
 }

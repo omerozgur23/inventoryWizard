@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BaseService<T> {
+
 	T create(T entity);
 
 	T update(T entity);
