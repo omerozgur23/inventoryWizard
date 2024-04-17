@@ -5,13 +5,9 @@ import java.util.UUID;
 
 import com.tobeto.dto.product.GetAllProductResponse;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class GetAllCategoryResponse {
 
 	private UUID id;
