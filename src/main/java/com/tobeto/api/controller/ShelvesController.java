@@ -70,7 +70,7 @@ public class ShelvesController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllShelfResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "5") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Shelf> shelfPage = shelfService.getAllByPage(pageNo, pageSize);
 		return shelfPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllShelfResponse.class))
 				.toList();

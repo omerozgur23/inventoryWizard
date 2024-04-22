@@ -138,36 +138,36 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	@Override
 	public void saleProduct(UUID productId, int count, UUID customerId, UUID userId) {
-		Product product = getProduct(productId);
-		Customer customer = customerService.getCustomer(customerId);
-		User user = userService.getUser(userId);
-		int[] remainingCount = new int[] { count };
-
-		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
-			int saleCount = Math.min(count, shelf.getCount());
-			shelf.setCount(shelf.getCount() - saleCount);
-
-			productBusinessRules.clearShelf(shelf);
-			shelfRepository.save(shelf);
-			remainingCount[0] -= saleCount;
-
-		});
-
-		if (remainingCount[0] > 0)
-			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
-
-		LocalDateTime now = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-		String formattedDateTime = now.format(formatter);
-		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
-		orderRepository.save(order);
-
-		OrderDetails orderDetail = OrderDetails.builder().order(orderRepository.findById(order.getId()).orElseThrow())
-				.product(product).quantity(count).unitPrice(product.getUnitPrice())
-				.totalPrice(count * product.getUnitPrice()).build();
-		orderDetailsRepository.save(orderDetail);
-
-		productBusinessRules.setProductQuantity(productId, product);
+//		Product product = getProduct(productId);
+//		Customer customer = customerService.getCustomer(customerId);
+//		User user = userService.getUser(userId);
+//		int[] remainingCount = new int[] { count };
+//
+//		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
+//			int saleCount = Math.min(count, shelf.getCount());
+//			shelf.setCount(shelf.getCount() - saleCount);
+//
+//			productBusinessRules.clearShelf(shelf);
+//			shelfRepository.save(shelf);
+//			remainingCount[0] -= saleCount;
+//
+//		});
+//
+//		if (remainingCount[0] > 0)
+//			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
+//
+//		LocalDateTime now = LocalDateTime.now();
+//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//		String formattedDateTime = now.format(formatter);
+//		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
+//		orderRepository.save(order);
+//
+//		OrderDetails orderDetail = OrderDetails.builder().order(orderRepository.findById(order.getId()).orElseThrow())
+//				.product(product).quantity(count).unitPrice(product.getUnitPrice())
+//				.totalPrice(count * product.getUnitPrice()).build();
+//		orderDetailsRepository.save(orderDetail);
+//
+//		productBusinessRules.setProductQuantity(productId, product);
 
 	}
 
@@ -205,7 +205,7 @@ public class ProductManager implements ProductService {
 		List<OrderDetails> orderDetailsList = new ArrayList<OrderDetails>();
 
 		LocalDateTime now = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		String formattedDateTime = now.format(formatter);
 
 		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
@@ -226,15 +226,16 @@ public class ProductManager implements ProductService {
 						.quantity(productItem.getCount()).unitPrice(product.getUnitPrice())
 						.totalPrice(productItem.getCount() * product.getUnitPrice()).build();
 				orderDetailsList.add(orderDetail);
-			});
 
-			if (remainingCount[0] > 0)
-				productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
+			});
 
 			orderRepository.save(order);
 			orderDetailsRepository.saveAll(orderDetailsList);
+			if (remainingCount[0] > 0)
+				productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
 
 			productBusinessRules.setProductQuantity(productItem.getProductId(), product);
+
 		}
 	}
 

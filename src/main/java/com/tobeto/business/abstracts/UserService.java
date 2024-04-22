@@ -15,4 +15,6 @@ public interface UserService extends BaseService<User> {
 
 	Optional<User> getUserByEmail(String email);
 
+	boolean changePassword(String lastPassword, String newPassword, String email);
+
 }

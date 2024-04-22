@@ -7,7 +7,10 @@ import lombok.Data;
 
 @Data
 public class SaleRequest {
+
 	private List<SaleProductDTO> productItems;
+
 	private UUID customerId;
+
 	private UUID userId;
 }
