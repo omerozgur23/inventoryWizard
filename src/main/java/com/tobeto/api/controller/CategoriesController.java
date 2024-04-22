@@ -67,7 +67,7 @@ public class CategoriesController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllCategoryResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Category> categoryPage = categoryService.getAllByPage(pageNo, pageSize);
 		return categoryPage.stream()
 				.map(product -> modelMapper.forResponse().map(product, GetAllCategoryResponse.class)).toList();

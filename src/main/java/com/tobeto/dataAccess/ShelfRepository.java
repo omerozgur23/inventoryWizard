@@ -18,8 +18,8 @@ public interface ShelfRepository extends JpaRepository<Shelf, UUID> {
 
 //	List<Shelf> findAllByCount(int count);
 
-	@Query("SELECT sum(s.count) FROM Shelf s WHERE s.product.id = :productId")
-	int sumCountByProductId(UUID productId);
+	@Query("SELECT COALESCE(sum(s.count), 0) FROM Shelf s WHERE s.product.id = :productId")
+	Integer sumCountByProductId(UUID productId);
 
 	List<Shelf> findAllByCountAndProductId(int count, UUID productId);
 }

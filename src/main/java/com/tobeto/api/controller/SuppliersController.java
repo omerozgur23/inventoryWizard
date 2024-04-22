@@ -67,7 +67,7 @@ public class SuppliersController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllSupplierResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Supplier> supplierPage = supplierService.getAllByPage(pageNo, pageSize);
 		return supplierPage.stream()
 				.map(product -> modelMapper.forResponse().map(product, GetAllSupplierResponse.class)).toList();

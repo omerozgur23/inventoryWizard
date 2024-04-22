@@ -96,7 +96,7 @@ public class ProductsController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllProductResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Product> productPage = productService.getAllByPage(pageNo, pageSize);
 		return productPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
 				.toList();
@@ -113,6 +113,7 @@ public class ProductsController {
 
 	@PostMapping("/saleTest")
 	public SuccessResponse saleProductTest(@RequestBody SaleRequest request) {
+		System.out.println(request);
 		productService.saleProductTest(request.getProductItems(), request.getCustomerId(), request.getUserId());
 		return new SuccessResponse();
 	}

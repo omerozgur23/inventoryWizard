@@ -31,7 +31,7 @@ public class OrdersController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllOrderResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Order> orderPage = orderService.getAllByPage(pageNo, pageSize);
 		return orderPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllOrderResponse.class))
 				.toList();
