@@ -59,7 +59,7 @@ public class CustomersController {
 
 	@GetMapping("/getallByPage")
 	public List<GetAllCustomerResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Customer> customerPage = customerService.getAllByPage(pageNo, pageSize);
 		return customerPage.stream()
 				.map(product -> modelMapper.forResponse().map(product, GetAllCustomerResponse.class)).toList();

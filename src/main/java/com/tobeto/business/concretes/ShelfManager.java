@@ -30,8 +30,8 @@ public class ShelfManager implements ShelfService {
 	@Override
 	public Shelf create(Shelf shelf) {
 		long currentShelfCount = shelfRepository.count();
-		if (currentShelfCount >= 10)
-			throw new BusinessException(Messages.WAREHOUSE_FULL);
+		shelfBusinessRules.checkIfWarehouseFull(currentShelfCount);
+		shelfBusinessRules.checkCapacityGreater(shelf.getCapacity());
 
 		int count = shelf.getCount();
 		if (count > 10) {
@@ -40,7 +40,7 @@ public class ShelfManager implements ShelfService {
 
 		int createdShelfCount = 0;
 		for (int i = 0; i < count; i++) {
-			if (currentShelfCount + createdShelfCount >= 10) {
+			if (currentShelfCount + createdShelfCount >= 100) {
 				break;
 			}
 			Shelf newShelf = new Shelf();
@@ -56,7 +56,7 @@ public class ShelfManager implements ShelfService {
 	@Override
 	public Shelf update(Shelf clientShelf) {
 		Shelf shelf = shelfRepository.findById(clientShelf.getId()).orElseThrow();
-
+		shelfBusinessRules.checkCapacityGreater(clientShelf.getCapacity());
 		shelf.setCapacity(clientShelf.getCapacity());
 		return shelfRepository.save(shelf);
 

@@ -72,8 +72,10 @@ public class ProductBusinessRules {
 	}
 
 	public void setProductQuantity(UUID productId, Product product) {
-		int totalProductCount = shelfRepository.sumCountByProductId(productId);
+		Integer totalProductCount = shelfRepository.sumCountByProductId(productId);
+
 		product.setQuantity(totalProductCount);
 		productRepository.save(product);
+
 	}
 }

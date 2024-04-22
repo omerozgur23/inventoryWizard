@@ -33,4 +33,16 @@ public class ShelfBusinessRules {
 		}
 	}
 
+	public void checkCapacityGreater(int capacity) {
+		if (capacity > 5) {
+			throw new BusinessException(Messages.CAPACITY_CANNOT_BE_BIG);
+		}
+	}
+
+	public void checkIfWarehouseFull(long currentShelfCount) {
+		if (currentShelfCount >= 100) {
+			throw new BusinessException(Messages.WAREHOUSE_FULL);
+		}
+	}
+
 }
