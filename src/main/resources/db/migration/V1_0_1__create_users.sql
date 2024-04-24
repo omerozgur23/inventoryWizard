@@ -4,5 +4,6 @@ CREATE TABLE users (
   last_name VARCHAR(20) NOT NULL,
   email VARCHAR(45) NULL,
   password VARCHAR(200) NULL,
-  PRIMARY KEY (id));
+  PRIMARY KEY (id),
+  UNIQUE INDEX email_unq (email ASC) VISIBLE);
   

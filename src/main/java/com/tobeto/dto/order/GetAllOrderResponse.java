@@ -14,4 +14,6 @@ public class GetAllOrderResponse {
 	private String employeeFirstName;
 
 	private String orderDate;
+
+	private double orderPrice;
 }

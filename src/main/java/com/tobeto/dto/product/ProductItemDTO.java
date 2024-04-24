@@ -1,11 +1,11 @@
-package com.tobeto.dto;
+package com.tobeto.dto.product;
 
 import java.util.UUID;
 
 import lombok.Data;
 
 @Data
-public class SaleProductDTO {
+public class ProductItemDTO {
 
 	private UUID productId;
 
