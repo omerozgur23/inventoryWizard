@@ -40,6 +40,9 @@ public class Order {
 	@Column(name = "order_date")
 	private String orderDate;
 
+	@Column(name = "order_price")
+	private double orderPrice;
+
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetails> orderDetails;
 }
