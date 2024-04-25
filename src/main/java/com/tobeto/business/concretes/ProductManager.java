@@ -22,7 +22,7 @@ import com.tobeto.dataAccess.OrderDetailsRepository;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
-import com.tobeto.dto.SaleProductDTO;
+import com.tobeto.dto.product.ProductItemDTO;
 import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
@@ -67,8 +67,6 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	@Override
 	public Product update(Product clientProduct) {
-//		Product product = productRepository.findById(clientProduct.getId())
-//				.orElseThrow(() -> new BusinessException(Messages.PRODUCT_ID_NOT_FOUND));
 		Product product = getProduct(clientProduct.getId());
 
 		product.setProductName(clientProduct.getProductName());
@@ -78,9 +76,6 @@ public class ProductManager implements ProductService {
 		product.setPurchasePrice(clientProduct.getPurchasePrice());
 		product.setUnitPrice(clientProduct.getUnitPrice());
 
-//		Product.builder().productName(clientProduct.getProductName())
-//				.criticalQuantity(clientProduct.getCriticalQuantity()).purchasePrice(clientProduct.getPurchasePrice())
-//				.unitPrice(clientProduct.getUnitPrice()).build();
 		return productRepository.save(product);
 	}
 
@@ -88,7 +83,6 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-//		Product product = productRepository.findById(id).orElseThrow();
 		Product product = getProduct(id);
 		productRepository.delete(product);
 	}
@@ -137,37 +131,45 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public void saleProduct(UUID productId, int count, UUID customerId, UUID userId) {
-//		Product product = getProduct(productId);
-//		Customer customer = customerService.getCustomer(customerId);
-//		User user = userService.getUser(userId);
-//		int[] remainingCount = new int[] { count };
-//
-//		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
-//			int saleCount = Math.min(count, shelf.getCount());
-//			shelf.setCount(shelf.getCount() - saleCount);
-//
-//			productBusinessRules.clearShelf(shelf);
-//			shelfRepository.save(shelf);
-//			remainingCount[0] -= saleCount;
-//
-//		});
-//
-//		if (remainingCount[0] > 0)
-//			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
-//
-//		LocalDateTime now = LocalDateTime.now();
-//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-//		String formattedDateTime = now.format(formatter);
-//		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
-//		orderRepository.save(order);
-//
-//		OrderDetails orderDetail = OrderDetails.builder().order(orderRepository.findById(order.getId()).orElseThrow())
-//				.product(product).quantity(count).unitPrice(product.getUnitPrice())
-//				.totalPrice(count * product.getUnitPrice()).build();
-//		orderDetailsRepository.save(orderDetail);
-//
-//		productBusinessRules.setProductQuantity(productId, product);
+	@Transactional
+	public void saleProduct(List<ProductItemDTO> productItems, UUID customerId, UUID userId) {
+		Customer customer = customerService.getCustomer(customerId);
+		User user = userService.getUser(userId);
+		List<OrderDetails> orderDetailsList = new ArrayList<OrderDetails>();
+
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		String formattedDateTime = now.format(formatter);
+
+		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
+
+		for (ProductItemDTO productItem : productItems) {
+			Product product = getProduct(productItem.getProductId());
+			int[] remainingCount = new int[] { productItem.getCount() };
+
+			shelfRepository.findByProductIdNotFull(productItem.getProductId()).ifPresent(shelf -> {
+				int saleCount = Math.min(productItem.getCount(), shelf.getCount());
+				shelf.setCount(shelf.getCount() - saleCount);
+
+				productBusinessRules.clearShelf(shelf);
+				shelfRepository.save(shelf);
+				remainingCount[0] -= saleCount;
+			});
+
+			if (remainingCount[0] > 0) {
+				productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
+			}
+			OrderDetails orderDetail = OrderDetails.builder().order(order).product(product)
+					.quantity(productItem.getCount()).unitPrice(product.getUnitPrice())
+					.totalPrice(productItem.getCount() * product.getUnitPrice()).build();
+			orderDetailsList.add(orderDetail);
+
+			productBusinessRules.setProductQuantity(productItem.getProductId(), product);
+		}
+		double totalPriceSum = orderDetailsList.stream().mapToDouble(od -> od.getTotalPrice()).sum();
+		order.setOrderPrice(totalPriceSum);
+		orderRepository.save(order);
+		orderDetailsRepository.saveAll(orderDetailsList);
 
 	}
 
@@ -198,45 +200,7 @@ public class ProductManager implements ProductService {
 	}
 
 	@Override
-	@Transactional
-	public void saleProductTest(List<SaleProductDTO> productItems, UUID customerId, UUID userId) {
-		Customer customer = customerService.getCustomer(customerId);
-		User user = userService.getUser(userId);
-		List<OrderDetails> orderDetailsList = new ArrayList<OrderDetails>();
-
-		LocalDateTime now = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		String formattedDateTime = now.format(formatter);
-
-		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
-
-		for (SaleProductDTO productItem : productItems) {
-			Product product = getProduct(productItem.getProductId());
-			int[] remainingCount = new int[] { productItem.getCount() };
-
-			shelfRepository.findByProductIdNotFull(productItem.getProductId()).ifPresent(shelf -> {
-				int saleCount = Math.min(productItem.getCount(), shelf.getCount());
-				shelf.setCount(shelf.getCount() - saleCount);
-
-				productBusinessRules.clearShelf(shelf);
-				shelfRepository.save(shelf);
-				remainingCount[0] -= saleCount;
-
-				OrderDetails orderDetail = OrderDetails.builder().order(order).product(product)
-						.quantity(productItem.getCount()).unitPrice(product.getUnitPrice())
-						.totalPrice(productItem.getCount() * product.getUnitPrice()).build();
-				orderDetailsList.add(orderDetail);
-
-			});
-
-			orderRepository.save(order);
-			orderDetailsRepository.saveAll(orderDetailsList);
-			if (remainingCount[0] > 0)
-				productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
-
-			productBusinessRules.setProductQuantity(productItem.getProductId(), product);
-
-		}
+	public List<Product> searchProducts(String keyword) {
+		return productRepository.searchProducts(keyword);
 	}
-
 }

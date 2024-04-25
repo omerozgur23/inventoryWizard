@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.ProductService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
-import com.tobeto.dto.SaleRequest;
 import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.product.AcceptProductRequest;
 import com.tobeto.dto.product.CreateProductRequest;
@@ -82,8 +81,7 @@ public class ProductsController {
 	/**********************************************************************/
 	@PostMapping("/sale")
 	public SuccessResponse saleProduct(@RequestBody SaleProductRequest request) {
-		productService.saleProduct(request.getProductId(), request.getCount(), request.getCustomerId(),
-				request.getUserId());
+		productService.saleProduct(request.getProductItems(), request.getCustomerId(), request.getUserId());
 		return new SuccessResponse();
 	}
 
@@ -111,11 +109,11 @@ public class ProductsController {
 				.toList();
 	}
 
-	@PostMapping("/saleTest")
-	public SuccessResponse saleProductTest(@RequestBody SaleRequest request) {
-		System.out.println(request);
-		productService.saleProductTest(request.getProductItems(), request.getCustomerId(), request.getUserId());
-		return new SuccessResponse();
+	@GetMapping("/search")
+	public List<GetByProductNameStartsWithResponse> searchProducts(@RequestParam String keyword) {
+		List<Product> products = productService.searchProducts(keyword);
+		return products.stream()
+				.map(product -> modelMapper.forResponse().map(product, GetByProductNameStartsWithResponse.class))
+				.toList();
 	}
-
 }
