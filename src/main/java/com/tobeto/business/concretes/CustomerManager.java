@@ -72,4 +72,9 @@ public class CustomerManager implements CustomerService {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		return customerRepository.findAll(pageable).getContent();
 	}
+
+	@Override
+	public List<Customer> searchItem(String keyword) {
+		return customerRepository.searchCustomer(keyword);
+	}
 }

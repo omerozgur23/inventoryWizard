@@ -29,41 +29,39 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
 			if (keyword != null && !keyword.isEmpty()) {
 				String likeKeyword = "%" + keyword + "%";
 
-				// productName, categoryName, supplierCompanyName alanlarını filtrele
 				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), likeKeyword));
 				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")),
 						likeKeyword));
 				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("supplier").get("companyName")),
 						likeKeyword));
 
-				// quantity ve criticalCount alanlarını filtrele (sayısal eşitlik)
-				try {
-					int quantity = Integer.parseInt(keyword);
-					predicates.add(criteriaBuilder.equal(root.get("quantity"), quantity));
-				} catch (NumberFormatException e) {
-
-				}
-
-				try {
-					int criticalCount = Integer.parseInt(keyword);
-					predicates.add(criteriaBuilder.equal(root.get("criticalCount"), criticalCount));
-				} catch (NumberFormatException e) {
-
-				}
-
-				try {
-					double purchasePrice = Double.parseDouble(keyword);
-					predicates.add(criteriaBuilder.equal(root.get("purchasePrice"), purchasePrice));
-				} catch (NumberFormatException e) {
-
-				}
-
-				try {
-					double unitPrice = Double.parseDouble(keyword);
-					predicates.add(criteriaBuilder.equal(root.get("unitPrice"), unitPrice));
-				} catch (NumberFormatException e) {
-
-				}
+//				try {
+//					int quantity = Integer.parseInt(keyword);
+//					predicates.add(criteriaBuilder.equal(root.get("quantity"), quantity));
+//				} catch (NumberFormatException e) {
+//
+//				}
+//
+//				try {
+//					int criticalCount = Integer.parseInt(keyword);
+//					predicates.add(criteriaBuilder.equal(root.get("criticalCount"), criticalCount));
+//				} catch (NumberFormatException e) {
+//
+//				}
+//
+//				try {
+//					double purchasePrice = Double.parseDouble(keyword);
+//					predicates.add(criteriaBuilder.equal(root.get("purchasePrice"), purchasePrice));
+//				} catch (NumberFormatException e) {
+//
+//				}
+//
+//				try {
+//					double unitPrice = Double.parseDouble(keyword);
+//					predicates.add(criteriaBuilder.equal(root.get("unitPrice"), unitPrice));
+//				} catch (NumberFormatException e) {
+//
+//				}
 			}
 
 			return criteriaBuilder.or(predicates.toArray(new Predicate[0]));

@@ -27,4 +27,9 @@ public class OrderManager implements OrderService {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		return orderRepository.findAll(pageable).getContent();
 	}
+
+	@Override
+	public List<Order> searchItem(String keyword) {
+		return orderRepository.searchOrder(keyword);
+	}
 }

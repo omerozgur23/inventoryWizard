@@ -110,10 +110,9 @@ public class ProductsController {
 	}
 
 	@GetMapping("/search")
-	public List<GetByProductNameStartsWithResponse> searchProducts(@RequestParam String keyword) {
-		List<Product> products = productService.searchProducts(keyword);
-		return products.stream()
-				.map(product -> modelMapper.forResponse().map(product, GetByProductNameStartsWithResponse.class))
+	public List<GetAllProductResponse> searchProducts(@RequestParam String keyword) {
+		List<Product> products = productService.searchItem(keyword);
+		return products.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
 				.toList();
 	}
 }

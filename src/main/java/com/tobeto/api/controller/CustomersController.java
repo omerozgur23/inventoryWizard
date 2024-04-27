@@ -65,4 +65,11 @@ public class CustomersController {
 				.map(product -> modelMapper.forResponse().map(product, GetAllCustomerResponse.class)).toList();
 	}
 
+	@GetMapping("/search")
+	public List<GetAllCustomerResponse> searchCustomer(@RequestParam String keyword) {
+		List<Customer> customers = customerService.searchItem(keyword);
+		return customers.stream().map(customer -> modelMapper.forResponse().map(customer, GetAllCustomerResponse.class))
+				.toList();
+	}
+
 }

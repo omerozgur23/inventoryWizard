@@ -90,4 +90,9 @@ public class ShelfManager implements ShelfService {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		return shelfRepository.findAll(pageable).getContent();
 	}
+
+	@Override
+	public List<Shelf> searchItem(String keyword) {
+		return shelfRepository.searchShelf(keyword);
+	}
 }

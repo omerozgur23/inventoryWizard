@@ -98,4 +98,18 @@ public class UsersController {
 		userService.changePassword(request.getLastPassword(), request.getNewPassword(), principal.getName());
 		return new SuccessResponse();
 	}
+
+	@GetMapping("/search")
+	public List<GetAllUserResponse> searchUser(@RequestParam String keyword) {
+		List<User> users = userService.searchItem(keyword);
+		List<GetAllUserResponse> result = new ArrayList<>();
+
+		users.forEach(user -> {
+			GetAllUserResponse response = modelMapper.forResponse().map(user, GetAllUserResponse.class);
+
+			response.setRole(userService.getUserRoles(user));
+			result.add(response);
+		});
+		return result;
+	}
 }

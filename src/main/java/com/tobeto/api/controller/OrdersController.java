@@ -37,4 +37,10 @@ public class OrdersController {
 				.toList();
 	}
 
+	@GetMapping("/search")
+	public List<GetAllOrderResponse> searchOrder(@RequestParam String keyword) {
+		List<Order> orders = orderService.searchItem(keyword);
+		return orders.stream().map(order -> modelMapper.forResponse().map(order, GetAllOrderResponse.class)).toList();
+	}
+
 }
