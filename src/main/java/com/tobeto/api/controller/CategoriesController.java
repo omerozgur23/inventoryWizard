@@ -73,4 +73,11 @@ public class CategoriesController {
 				.map(product -> modelMapper.forResponse().map(product, GetAllCategoryResponse.class)).toList();
 	}
 
+	@GetMapping("/search")
+	public List<GetAllCategoryResponse> searchCategory(@RequestParam String keyword) {
+		List<Category> categories = categoryService.searchItem(keyword);
+		return categories.stream()
+				.map(categorie -> modelMapper.forResponse().map(categorie, GetAllCategoryResponse.class)).toList();
+	}
+
 }

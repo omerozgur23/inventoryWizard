@@ -9,4 +9,6 @@ public interface OrderService {
 	List<Order> getAll();
 
 	List<Order> getAllByPage(int pageNo, int pageSize);
+
+	List<Order> searchItem(String keyword);
 }

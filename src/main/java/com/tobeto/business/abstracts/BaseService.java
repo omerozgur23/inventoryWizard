@@ -14,4 +14,6 @@ public interface BaseService<T> {
 	List<T> getAll();
 
 	List<T> getAllByPage(int pageNo, int pageSize);
+
+	List<T> searchItem(String keyword);
 }

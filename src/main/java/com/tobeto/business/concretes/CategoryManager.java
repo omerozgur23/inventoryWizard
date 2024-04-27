@@ -73,4 +73,9 @@ public class CategoryManager implements CategoryService {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		return categoryRepository.findAll(pageable).getContent();
 	}
+
+	@Override
+	public List<Category> searchItem(String keyword) {
+		return categoryRepository.searchCategories(keyword);
+	}
 }
