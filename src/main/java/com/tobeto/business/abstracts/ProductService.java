@@ -17,6 +17,4 @@ public interface ProductService extends BaseService<Product> {
 
 	/************************ search deneme *******************/
 	List<Product> getByProductNameStartsWith(String productName);
-
-	List<Product> searchProducts(String keyword);
 }

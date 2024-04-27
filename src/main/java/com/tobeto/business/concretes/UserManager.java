@@ -162,4 +162,9 @@ public class UserManager implements UserService {
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
+
+	@Override
+	public List<User> searchItem(String keyword) {
+		return userRepository.searchUser(keyword);
+	}
 }

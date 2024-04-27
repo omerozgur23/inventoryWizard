@@ -200,7 +200,7 @@ public class ProductManager implements ProductService {
 	}
 
 	@Override
-	public List<Product> searchProducts(String keyword) {
+	public List<Product> searchItem(String keyword) {
 		return productRepository.searchProducts(keyword);
 	}
 }

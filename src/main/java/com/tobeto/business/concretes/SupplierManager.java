@@ -60,4 +60,9 @@ public class SupplierManager implements SupplierService {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		return supplierRepository.findAll(pageable).getContent();
 	}
+
+	@Override
+	public List<Supplier> searchItem(String keyword) {
+		return supplierRepository.searchSupplier(keyword);
+	}
 }

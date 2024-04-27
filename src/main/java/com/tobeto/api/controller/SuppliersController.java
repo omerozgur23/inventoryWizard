@@ -72,4 +72,11 @@ public class SuppliersController {
 		return supplierPage.stream()
 				.map(product -> modelMapper.forResponse().map(product, GetAllSupplierResponse.class)).toList();
 	}
+
+	@GetMapping("/search")
+	public List<GetAllSupplierResponse> searchSupplier(@RequestParam String keyword) {
+		List<Supplier> suppliers = supplierService.searchItem(keyword);
+		return suppliers.stream().map(supplier -> modelMapper.forResponse().map(supplier, GetAllSupplierResponse.class))
+				.toList();
+	}
 }

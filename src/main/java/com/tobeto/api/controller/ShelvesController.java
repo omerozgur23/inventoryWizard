@@ -75,4 +75,11 @@ public class ShelvesController {
 		return shelfPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllShelfResponse.class))
 				.toList();
 	}
+
+	@GetMapping("/search")
+	public List<GetAllShelfResponse> searchShelf(@RequestParam String keyword) {
+		List<Shelf> shelves = shelfService.searchItem(keyword);
+		return shelves.stream().map(shelve -> modelMapper.forResponse().map(shelve, GetAllShelfResponse.class))
+				.toList();
+	}
 }
