@@ -1,7 +1,5 @@
 package com.tobeto.business.rules.shelf;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +15,11 @@ public class ShelfBusinessRules {
 	@Autowired
 	private ShelfRepository shelfRepository;
 
-	public void checkIfByIdExists(UUID id) {
-		if (!shelfRepository.existsById(id)) {
-			throw new BusinessException(Messages.SHELF_ID_NOT_FOUND);
-		}
-	}
+//	public void checkIfByIdExists(UUID id) {
+//		if (!shelfRepository.existsById(id)) {
+//			throw new BusinessException(Messages.SHELF_ID_NOT_FOUND);
+//		}
+//	}
 
 	public void checkIfShelfEmpty(Shelf shelf) {
 		Product product = shelf.getProduct();

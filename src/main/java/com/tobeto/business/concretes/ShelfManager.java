@@ -66,9 +66,7 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-//		shelfBusinessRules.checkIfShelfEmpty(id);
 //		shelfBusinessRules.checkIfByIdExists(id);
-
 		Shelf shelf = shelfRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(Messages.SHELF_ID_NOT_FOUND));
 

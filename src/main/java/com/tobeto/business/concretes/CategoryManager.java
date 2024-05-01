@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.CategoryService;
 import com.tobeto.business.rules.category.CategoryBusinessRules;
+import com.tobeto.core.utilities.exceptions.BusinessException;
+import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.CategoryRepository;
 import com.tobeto.entities.concretes.Category;
 
@@ -45,9 +47,12 @@ public class CategoryManager implements CategoryService {
 	/**********************************************************************/
 	@Override
 	public Category update(Category clientCategory) {
-		Category category = categoryRepository.findById(clientCategory.getId()).orElseThrow();
+		Category category = categoryRepository.findById(clientCategory.getId())
+				.orElseThrow(() -> new BusinessException(Messages.CATEGORY_ID_NOT_FOUND));
 
-		category.setCategoryName(clientCategory.getCategoryName());
+		String formattedCategoryName = capitalizeFirstLetter(clientCategory.getCategoryName());
+
+		category.setCategoryName(formattedCategoryName);
 		return categoryRepository.save(category);
 	}
 
@@ -55,7 +60,8 @@ public class CategoryManager implements CategoryService {
 	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-		Category category = categoryRepository.findById(id).orElseThrow();
+		Category category = categoryRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(Messages.CATEGORY_ID_NOT_FOUND));
 		categoryRepository.delete(category);
 	}
 

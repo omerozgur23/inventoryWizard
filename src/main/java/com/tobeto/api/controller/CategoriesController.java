@@ -33,8 +33,8 @@ public class CategoriesController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@PostMapping("/create")
-	public SuccessResponse create(@RequestBody CreateCategoryRequest reqeust) {
-		Category category = modelMapper.forRequest().map(reqeust, Category.class);
+	public SuccessResponse create(@RequestBody CreateCategoryRequest request) {
+		Category category = modelMapper.forRequest().map(request, Category.class);
 		categoryService.create(category);
 		return new SuccessResponse();
 	}
