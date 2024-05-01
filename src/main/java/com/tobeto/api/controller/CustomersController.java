@@ -71,5 +71,4 @@ public class CustomersController {
 		return customers.stream().map(customer -> modelMapper.forResponse().map(customer, GetAllCustomerResponse.class))
 				.toList();
 	}
-
 }

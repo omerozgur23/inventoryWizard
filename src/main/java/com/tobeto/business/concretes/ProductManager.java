@@ -23,7 +23,6 @@ import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
 import com.tobeto.dto.product.ProductItemDTO;
-import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
@@ -175,13 +174,6 @@ public class ProductManager implements ProductService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	@Override
-	public List<ProductWithCategoryResponse> getProductWithCategoryDetails() {
-		return productRepository.getProductWithCategoryDetails();
-	}
-
-	/**********************************************************************/
-	/**********************************************************************/
 	private Product getProduct(UUID productId) {
 		Optional<Product> oProduct = productRepository.findById(productId);
 		Product product = null;
@@ -191,12 +183,6 @@ public class ProductManager implements ProductService {
 			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
 		}
 		return product;
-	}
-
-	/******************* search deneme *******************/
-	@Override
-	public List<Product> getByProductNameStartsWith(String productName) {
-		return productRepository.getByProductNameStartsWith(productName);
 	}
 
 	@Override
