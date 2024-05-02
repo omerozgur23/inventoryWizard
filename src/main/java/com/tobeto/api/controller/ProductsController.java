@@ -18,8 +18,6 @@ import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.product.AcceptProductRequest;
 import com.tobeto.dto.product.CreateProductRequest;
 import com.tobeto.dto.product.GetAllProductResponse;
-import com.tobeto.dto.product.GetByProductNameStartsWithResponse;
-import com.tobeto.dto.product.ProductWithCategoryResponse;
 import com.tobeto.dto.product.SaleProductRequest;
 import com.tobeto.dto.product.UpdateProductRequest;
 import com.tobeto.entities.concretes.Product;
@@ -46,7 +44,7 @@ public class ProductsController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@PutMapping("/update")
-	public SuccessResponse update(UpdateProductRequest request) {
+	public SuccessResponse update(@RequestBody UpdateProductRequest request) {
 		Product product = modelMapper.forRequest().map(request, Product.class);
 		productService.update(product);
 		return new SuccessResponse();
@@ -81,32 +79,22 @@ public class ProductsController {
 	/**********************************************************************/
 	@PostMapping("/sale")
 	public SuccessResponse saleProduct(@RequestBody SaleProductRequest request) {
-		productService.saleProduct(request.getProductId(), request.getCount(), request.getCustomerId(),
-				request.getUserId());
+		productService.saleProduct(request.getProductItems(), request.getCustomerId(), request.getUserId());
 		return new SuccessResponse();
-	}
-
-	/**********************************************************************/
-	/**********************************************************************/
-	@GetMapping("/getProductWithCategoryDetails")
-	public List<ProductWithCategoryResponse> getProductWithCategoryDetails() {
-		return productService.getProductWithCategoryDetails();
 	}
 
 	@GetMapping("/getallByPage")
 	public List<GetAllProductResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "2") int pageSize) {
+			@RequestParam(defaultValue = "18") int pageSize) {
 		List<Product> productPage = productService.getAllByPage(pageNo, pageSize);
 		return productPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
 				.toList();
 	}
 
-	/**************************** search deneme *********************/
-	@GetMapping("/getByProductNameStartsWith")
-	public List<GetByProductNameStartsWithResponse> getByProductNameStartsWith(@RequestParam String productName) {
-		List<Product> products = productService.getByProductNameStartsWith(productName);
-		return products.stream()
-				.map(product -> modelMapper.forResponse().map(product, GetByProductNameStartsWithResponse.class))
+	@GetMapping("/search")
+	public List<GetAllProductResponse> searchProducts(@RequestParam String keyword) {
+		List<Product> products = productService.searchItem(keyword);
+		return products.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
 				.toList();
 	}
 }

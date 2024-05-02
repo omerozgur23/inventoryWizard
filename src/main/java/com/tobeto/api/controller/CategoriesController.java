@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.CategoryService;
@@ -32,8 +33,8 @@ public class CategoriesController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@PostMapping("/create")
-	public SuccessResponse create(@RequestBody CreateCategoryRequest reqeust) {
-		Category category = modelMapper.forRequest().map(reqeust, Category.class);
+	public SuccessResponse create(@RequestBody CreateCategoryRequest request) {
+		Category category = modelMapper.forRequest().map(request, Category.class);
 		categoryService.create(category);
 		return new SuccessResponse();
 	}
@@ -62,6 +63,21 @@ public class CategoriesController {
 		List<Category> categories = categoryService.getAll();
 		return categories.stream()
 				.map(category -> modelMapper.forResponse().map(category, GetAllCategoryResponse.class)).toList();
+	}
+
+	@GetMapping("/getallByPage")
+	public List<GetAllCategoryResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "18") int pageSize) {
+		List<Category> categoryPage = categoryService.getAllByPage(pageNo, pageSize);
+		return categoryPage.stream()
+				.map(product -> modelMapper.forResponse().map(product, GetAllCategoryResponse.class)).toList();
+	}
+
+	@GetMapping("/search")
+	public List<GetAllCategoryResponse> searchCategory(@RequestParam String keyword) {
+		List<Category> categories = categoryService.searchItem(keyword);
+		return categories.stream()
+				.map(categorie -> modelMapper.forResponse().map(categorie, GetAllCategoryResponse.class)).toList();
 	}
 
 }

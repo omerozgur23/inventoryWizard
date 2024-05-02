@@ -1,5 +1,6 @@
 package com.tobeto.dto.product;
 
+import java.util.List;
 import java.util.UUID;
 
 import lombok.Data;
@@ -7,9 +8,7 @@ import lombok.Data;
 @Data
 public class SaleProductRequest {
 
-	private UUID productId;
-
-	private int count;
+	private List<ProductItemDTO> productItems;
 
 	private UUID customerId;
 

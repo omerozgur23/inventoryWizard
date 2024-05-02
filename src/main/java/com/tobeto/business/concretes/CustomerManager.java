@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.CustomerService;
@@ -27,15 +29,18 @@ public class CustomerManager implements CustomerService {
 	public Customer create(Customer customer) {
 		customerBusinessRules.checkIfCompanyNameExists(customer.getCompanyName());
 		customerBusinessRules.checkIfTaxNumberExists(customer.getTaxNumber());
-		customerBusinessRules.checkIfEmailExists(customer.getEmail());
+		customerBusinessRules.checkIfEmailExists(customer.getContactEmail());
 		return customerRepository.save(customer);
 	}
 
 	@Override
-	public Customer update(Customer customer) {
-		Customer newCustomer = customerRepository.findById(customer.getId()).orElseThrow();
-		customer.setCompanyName(newCustomer.getCompanyName());
-		customer.setTaxNumber(newCustomer.getTaxNumber());
+	public Customer update(Customer clientCustomer) {
+		Customer customer = customerRepository.findById(clientCustomer.getId()).orElseThrow();
+		customer.setCompanyName(clientCustomer.getCompanyName());
+		customer.setContactName(clientCustomer.getContactName());
+		customer.setContactEmail(clientCustomer.getContactEmail());
+		customer.setContactPhone(clientCustomer.getContactPhone());
+		customer.setAddress(clientCustomer.getAddress());
 		return customerRepository.save(customer);
 	}
 
@@ -60,5 +65,16 @@ public class CustomerManager implements CustomerService {
 			throw new BusinessException(Messages.CUSTOMER_ID_NOT_FOUND);
 		}
 		return customer;
+	}
+
+	@Override
+	public List<Customer> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return customerRepository.findAll(pageable).getContent();
+	}
+
+	@Override
+	public List<Customer> searchItem(String keyword) {
+		return customerRepository.searchCustomer(keyword);
 	}
 }

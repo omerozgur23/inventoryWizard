@@ -1,12 +1,14 @@
 package com.tobeto.business.rules.product;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
+import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
 import com.tobeto.entities.concretes.Product;
 import com.tobeto.entities.concretes.Shelf;
@@ -16,6 +18,9 @@ public class ProductBusinessRules {
 
 	@Autowired
 	private ShelfRepository shelfRepository;
+
+	@Autowired
+	private ProductRepository productRepository;
 
 	public void fillEmptyShelves(int count, Product product) {
 
@@ -64,5 +69,13 @@ public class ProductBusinessRules {
 			count -= saleCount;
 			nextAvailableShelf--;
 		}
+	}
+
+	public void setProductQuantity(UUID productId, Product product) {
+		Integer totalProductCount = shelfRepository.sumCountByProductId(productId);
+
+		product.setQuantity(totalProductCount);
+		productRepository.save(product);
+
 	}
 }

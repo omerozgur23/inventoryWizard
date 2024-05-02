@@ -1,9 +1,10 @@
 CREATE TABLE products (
   `id` BINARY(16) NOT NULL,
   `product_name` VARCHAR(45)NOT NULL,
-  `category_id` BINARY(16) NULL,
+  `category_id` BINARY(16) NOT NULL,
   supplier_id BINARY(16) NOT NULL,
-  `quantity` INT NOT NULL,
+  critical_count INT NOT NULL,
+  `quantity` INT NULL,
   `purchase_price` DECIMAL NOT NULL,
   `unit_price` DECIMAL NOT NULL,
   PRIMARY KEY (`id`),

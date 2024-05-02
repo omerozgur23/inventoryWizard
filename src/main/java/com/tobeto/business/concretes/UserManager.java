@@ -6,6 +6,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,20 +44,8 @@ public class UserManager implements UserService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Transactional
-	public Optional<User> getUser(String email) {
-		Optional<User> users = userRepository.findByEmail(email);
-		if (users.isPresent()) {
-			users.get().getRoles();
-		}
-		return users;
-	}
-
-	/**********************************************************************/
-	/**********************************************************************/
-	@Transactional
 	@Override
 	public User create(User user) {
-
 		userBusinessRules.checkIfEmailExist(user.getEmail());
 
 //		List<Roles> roles = rolesRepository.findAll();
@@ -66,7 +56,25 @@ public class UserManager implements UserService {
 //		roles.forEach(r -> r.getUsers().add(user));
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
+	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public User update(User clientUser) {
+		User user = userRepository.findById(clientUser.getId()).orElseThrow();
+		clientUser.setPassword(passwordEncoder.encode(clientUser.getPassword()));
+		user.setEmail(clientUser.getEmail());
+		user.setPassword(clientUser.getPassword());
+		return userRepository.save(user);
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public void delete(UUID id) {
+		User user = userRepository.findById(id).orElseThrow();
+		userRepository.delete(user);
 	}
 
 	/**********************************************************************/
@@ -82,6 +90,16 @@ public class UserManager implements UserService {
 		return query.getResultList();
 	}
 
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public List<User> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		return userRepository.findAll(pageable).getContent();
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
 	public String getUserRoles(User user) {
 		if (user.getRoles().size() > 0) {
 			String s = user.getRoles().stream().map(r -> r.getRole()).collect(Collectors.joining(","));
@@ -93,35 +111,27 @@ public class UserManager implements UserService {
 
 	/**********************************************************************/
 	/**********************************************************************/
+	@Override
 	public boolean changePassword(String lastPassword, String newPassword, String email) {
 		Optional<User> users = userRepository.findByEmail(email);
 		if (users.isPresent()) {
-			// kullanıcı, adına göre veritabanında bulundu
-			// şifresini kontrol edelim
 			User user = users.get();
+
 			if (passwordEncoder.matches(lastPassword, user.getPassword())) {
-				// şifre doğru ise şifresi yeni şifre ile güncellendi
 				user.setPassword(passwordEncoder.encode(newPassword));
 				userRepository.save(user);
 				return true;
+			} else {
+				throw new BusinessException(Messages.INCORRECT_LAST_PASSWORD);
 			}
+		} else {
+			throw new BusinessException(Messages.USER_ID_NOT_FOUND);
 		}
-		return false;
+
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
-	@Override
-	public void delete(UUID id) {
-		User user = userRepository.findById(id).orElseThrow();
-		userRepository.delete(user);
-	}
-
-	@Override
-	public User update(User entity) {
-		return null;
-	}
-
 	@Override
 	public User getUser(UUID userId) {
 		Optional<User> oUser = userRepository.findById(userId);
@@ -132,5 +142,29 @@ public class UserManager implements UserService {
 			throw new BusinessException(Messages.USER_ID_NOT_FOUND);
 		}
 		return user;
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	@Transactional
+	public Optional<User> getUser(String email) {
+		Optional<User> users = userRepository.findByEmail(email);
+		if (users.isPresent()) {
+			users.get().getRoles();
+		}
+		return users;
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public Optional<User> getUserByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
+
+	@Override
+	public List<User> searchItem(String keyword) {
+		return userRepository.searchUser(keyword);
 	}
 }

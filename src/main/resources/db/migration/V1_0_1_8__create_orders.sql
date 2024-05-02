@@ -3,9 +3,8 @@ CREATE TABLE orders (
   `customer_id` BINARY(16) NOT NULL,
   `employee_id` BINARY(16) NOT NULL,
   `order_date` DATETIME NOT NULL,
+  order_price DECIMAL NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `customer_id_UNIQUE` (`customer_id` ASC) VISIBLE,
-  UNIQUE INDEX `employee_id_UNIQUE` (`employee_id` ASC) VISIBLE,
   CONSTRAINT `or_cus_cus_fk`
     FOREIGN KEY (`customer_id`)
     REFERENCES `inventorywizard`.`customers` (`id`)

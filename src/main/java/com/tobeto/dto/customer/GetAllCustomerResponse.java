@@ -13,7 +13,7 @@ public class GetAllCustomerResponse {
 
 	private String contactName;
 
-	private String email;
+	private String contactEmail;
 
 	private String contactPhone;
 
