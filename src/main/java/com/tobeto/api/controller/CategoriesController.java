@@ -19,6 +19,7 @@ import com.tobeto.dto.category.CreateCategoryRequest;
 import com.tobeto.dto.category.GetAllCategoryResponse;
 import com.tobeto.dto.category.UpdateCategoryRequest;
 import com.tobeto.entities.concretes.Category;
+import com.tobeto.entities.concretes.PageResponse;
 
 @RestController
 @RequestMapping("api/v1/category")
@@ -59,25 +60,28 @@ public class CategoriesController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")
-	public List<GetAllCategoryResponse> getAll() {
-		List<Category> categories = categoryService.getAll();
-		return categories.stream()
-				.map(category -> modelMapper.forResponse().map(category, GetAllCategoryResponse.class)).toList();
+	public PageResponse<GetAllCategoryResponse> getAll() {
+		PageResponse<Category> categoryPage = categoryService.getAll();
+		List<GetAllCategoryResponse> responseList = categoryPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllCategoryResponse.class)).toList();
+		return new PageResponse<>(categoryPage.getCount(), responseList);
 	}
 
 	@GetMapping("/getallByPage")
-	public List<GetAllCategoryResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "18") int pageSize) {
-		List<Category> categoryPage = categoryService.getAllByPage(pageNo, pageSize);
-		return categoryPage.stream()
-				.map(product -> modelMapper.forResponse().map(product, GetAllCategoryResponse.class)).toList();
+	public PageResponse<GetAllCategoryResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<Category> categoryPage = categoryService.getAllByPage(pageNo, pageSize);
+		List<GetAllCategoryResponse> responseList = categoryPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllCategoryResponse.class)).toList();
+
+		return new PageResponse<>(categoryPage.getCount(), responseList);
 	}
 
 	@GetMapping("/search")
 	public List<GetAllCategoryResponse> searchCategory(@RequestParam String keyword) {
 		List<Category> categories = categoryService.searchItem(keyword);
 		return categories.stream()
-				.map(categorie -> modelMapper.forResponse().map(categorie, GetAllCategoryResponse.class)).toList();
+				.map(category -> modelMapper.forResponse().map(category, GetAllCategoryResponse.class)).toList();
 	}
 
 }
