@@ -15,6 +15,7 @@ import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.CustomerRepository;
 import com.tobeto.entities.concretes.Customer;
+import com.tobeto.entities.concretes.PageResponse;
 
 @Service
 public class CustomerManager implements CustomerService {
@@ -51,8 +52,10 @@ public class CustomerManager implements CustomerService {
 	}
 
 	@Override
-	public List<Customer> getAll() {
-		return customerRepository.findAll();
+	public PageResponse<Customer> getAll() {
+		List<Customer> customers = customerRepository.findAll();
+		int totalShelvesCount = customerRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, customers);
 	}
 
 	@Override
@@ -68,9 +71,11 @@ public class CustomerManager implements CustomerService {
 	}
 
 	@Override
-	public List<Customer> getAllByPage(int pageNo, int pageSize) {
+	public PageResponse<Customer> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return customerRepository.findAll(pageable).getContent();
+		List<Customer> customers = customerRepository.findAll(pageable).getContent();
+		int totalShelvesCount = customerRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, customers);
 	}
 
 	@Override

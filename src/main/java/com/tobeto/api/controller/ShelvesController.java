@@ -18,6 +18,7 @@ import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.shelf.CreateShelfRequest;
 import com.tobeto.dto.shelf.GetAllShelfResponse;
 import com.tobeto.dto.shelf.UpdateShelfRequest;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Shelf;
 
 @RestController
@@ -32,11 +33,6 @@ public class ShelvesController {
 
 	/**********************************************************************/
 	/**********************************************************************/
-//	@PostMapping("/create")
-//	public SuccessResponse create(@RequestBody CreateShelfRequest request) {
-//		shelfService.create(request.getCapacity(), request.getCount());
-//		return new SuccessResponse();
-//	}
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateShelfRequest request) {
 		shelfService.create(modelMapper.forRequest().map(request, Shelf.class));
@@ -63,17 +59,20 @@ public class ShelvesController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")
-	public List<GetAllShelfResponse> getAll() {
-		List<Shelf> shelves = shelfService.getAll();
-		return shelves.stream().map(shelf -> modelMapper.forResponse().map(shelf, GetAllShelfResponse.class)).toList();
+	public PageResponse<GetAllShelfResponse> getAll() {
+		PageResponse<Shelf> shelfPage = shelfService.getAll();
+		List<GetAllShelfResponse> responseList = shelfPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllShelfResponse.class)).toList();
+		return new PageResponse<>(shelfPage.getCount(), responseList);
 	}
 
 	@GetMapping("/getallByPage")
-	public List<GetAllShelfResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "18") int pageSize) {
-		List<Shelf> shelfPage = shelfService.getAllByPage(pageNo, pageSize);
-		return shelfPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllShelfResponse.class))
-				.toList();
+	public PageResponse<GetAllShelfResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<Shelf> shelfPage = shelfService.getAllByPage(pageNo, pageSize);
+		List<GetAllShelfResponse> responseList = shelfPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllShelfResponse.class)).toList();
+		return new PageResponse<>(shelfPage.getCount(), responseList);
 	}
 
 	@GetMapping("/search")

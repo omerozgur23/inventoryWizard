@@ -13,6 +13,7 @@ import com.tobeto.business.abstracts.OrderDetailsService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
 import com.tobeto.dto.orderDetails.GetAllOrderDetailsResponse;
 import com.tobeto.entities.concretes.OrderDetails;
+import com.tobeto.entities.concretes.PageResponse;
 
 @RestController
 @RequestMapping("/api/v1/orderDetails")
@@ -29,6 +30,15 @@ public class OrderDetailsController {
 		List<OrderDetails> orderDetails = orderDetailsService.getAll();
 		return orderDetails.stream().map(od -> modelMapper.forResponse().map(od, GetAllOrderDetailsResponse.class))
 				.toList();
+	}
+
+	@GetMapping("/getallByPage")
+	public PageResponse<GetAllOrderDetailsResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<OrderDetails> shelfPage = orderDetailsService.getAllByPage(pageNo, pageSize);
+		List<GetAllOrderDetailsResponse> responseList = shelfPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllOrderDetailsResponse.class)).toList();
+		return new PageResponse<>(shelfPage.getCount(), responseList);
 	}
 
 	@GetMapping("/getByOrderId")

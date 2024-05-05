@@ -3,6 +3,8 @@ package com.tobeto.business.abstracts;
 import java.util.List;
 import java.util.UUID;
 
+import com.tobeto.entities.concretes.PageResponse;
+
 public interface BaseService<T> {
 
 	T create(T entity);
@@ -11,9 +13,9 @@ public interface BaseService<T> {
 
 	void delete(UUID id);
 
-	List<T> getAll();
+	PageResponse<T> getAll();
 
-	List<T> getAllByPage(int pageNo, int pageSize);
+	PageResponse<T> getAllByPage(int pageNo, int pageSize);
 
 	List<T> searchItem(String keyword);
 }

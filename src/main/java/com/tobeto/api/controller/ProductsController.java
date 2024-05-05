@@ -20,6 +20,7 @@ import com.tobeto.dto.product.CreateProductRequest;
 import com.tobeto.dto.product.GetAllProductResponse;
 import com.tobeto.dto.product.SaleProductRequest;
 import com.tobeto.dto.product.UpdateProductRequest;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Product;
 
 @RestController
@@ -61,10 +62,11 @@ public class ProductsController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")
-	public List<GetAllProductResponse> getAll() {
-		List<Product> products = productService.getAll();
-		return products.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
-				.toList();
+	public PageResponse<GetAllProductResponse> getAll() {
+		PageResponse<Product> productPage = productService.getAll();
+		List<GetAllProductResponse> responseList = productPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllProductResponse.class)).toList();
+		return new PageResponse<>(productPage.getCount(), responseList);
 	}
 
 	/**********************************************************************/
@@ -84,11 +86,12 @@ public class ProductsController {
 	}
 
 	@GetMapping("/getallByPage")
-	public List<GetAllProductResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "18") int pageSize) {
-		List<Product> productPage = productService.getAllByPage(pageNo, pageSize);
-		return productPage.stream().map(product -> modelMapper.forResponse().map(product, GetAllProductResponse.class))
-				.toList();
+	public PageResponse<GetAllProductResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<Product> productPage = productService.getAllByPage(pageNo, pageSize);
+		List<GetAllProductResponse> responseList = productPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllProductResponse.class)).toList();
+		return new PageResponse<>(productPage.getCount(), responseList);
 	}
 
 	@GetMapping("/search")

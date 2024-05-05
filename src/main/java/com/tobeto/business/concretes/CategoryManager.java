@@ -14,6 +14,7 @@ import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.CategoryRepository;
 import com.tobeto.entities.concretes.Category;
+import com.tobeto.entities.concretes.PageResponse;
 
 @Service
 public class CategoryManager implements CategoryService {
@@ -68,16 +69,20 @@ public class CategoryManager implements CategoryService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Category> getAll() {
-		return categoryRepository.findAll();
+	public PageResponse<Category> getAll() {
+		List<Category> categories = categoryRepository.findAll();
+		int totalShelvesCount = categoryRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, categories);
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Category> getAllByPage(int pageNo, int pageSize) {
+	public PageResponse<Category> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return categoryRepository.findAll(pageable).getContent();
+		List<Category> categories = categoryRepository.findAll(pageable).getContent();
+		int totalShelvesCount = categoryRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, categories);
 	}
 
 	@Override
