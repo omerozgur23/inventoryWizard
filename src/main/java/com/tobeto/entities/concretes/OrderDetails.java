@@ -40,5 +40,4 @@ public class OrderDetails {
 	private double totalPrice;
 
 	private int quantity;
-
 }

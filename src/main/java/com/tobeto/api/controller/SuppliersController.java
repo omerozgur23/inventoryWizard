@@ -18,6 +18,7 @@ import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.supplier.CreateSupplierRequest;
 import com.tobeto.dto.supplier.GetAllSupplierResponse;
 import com.tobeto.dto.supplier.UpdateSupplierRequest;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Supplier;
 
 @RestController
@@ -59,18 +60,20 @@ public class SuppliersController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")
-	public List<GetAllSupplierResponse> getAll() {
-		List<Supplier> suppliers = supplierService.getAll();
-		return suppliers.stream().map(supplier -> modelMapper.forResponse().map(supplier, GetAllSupplierResponse.class))
-				.toList();
+	public PageResponse<GetAllSupplierResponse> getAll() {
+		PageResponse<Supplier> supplierPage = supplierService.getAll();
+		List<GetAllSupplierResponse> responseList = supplierPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllSupplierResponse.class)).toList();
+		return new PageResponse<>(supplierPage.getCount(), responseList);
 	}
 
 	@GetMapping("/getallByPage")
-	public List<GetAllSupplierResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "18") int pageSize) {
-		List<Supplier> supplierPage = supplierService.getAllByPage(pageNo, pageSize);
-		return supplierPage.stream()
-				.map(product -> modelMapper.forResponse().map(product, GetAllSupplierResponse.class)).toList();
+	public PageResponse<GetAllSupplierResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<Supplier> supplierPage = supplierService.getAllByPage(pageNo, pageSize);
+		List<GetAllSupplierResponse> responseList = supplierPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllSupplierResponse.class)).toList();
+		return new PageResponse<>(supplierPage.getCount(), responseList);
 	}
 
 	@GetMapping("/search")
