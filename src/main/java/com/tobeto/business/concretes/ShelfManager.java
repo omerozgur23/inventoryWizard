@@ -13,6 +13,7 @@ import com.tobeto.business.rules.shelf.ShelfBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.ShelfRepository;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Shelf;
 
 @Service
@@ -79,14 +80,18 @@ public class ShelfManager implements ShelfService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Shelf> getAll() {
-		return shelfRepository.findAll();
+	public PageResponse<Shelf> getAll() {
+		List<Shelf> shelves = shelfRepository.findAll();
+		int totalShelvesCount = shelfRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, shelves);
 	}
 
 	@Override
-	public List<Shelf> getAllByPage(int pageNo, int pageSize) {
+	public PageResponse<Shelf> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return shelfRepository.findAll(pageable).getContent();
+		List<Shelf> shelves = shelfRepository.findAll(pageable).getContent();
+		int totalShelvesCount = shelfRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, shelves);
 	}
 
 	@Override

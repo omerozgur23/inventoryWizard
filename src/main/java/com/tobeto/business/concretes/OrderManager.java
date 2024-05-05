@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.tobeto.business.abstracts.OrderService;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.entities.concretes.Order;
+import com.tobeto.entities.concretes.PageResponse;
 
 @Service
 public class OrderManager implements OrderService {
@@ -23,9 +24,11 @@ public class OrderManager implements OrderService {
 	}
 
 	@Override
-	public List<Order> getAllByPage(int pageNo, int pageSize) {
+	public PageResponse<Order> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return orderRepository.findAll(pageable).getContent();
+		List<Order> orders = orderRepository.findAll(pageable).getContent();
+		int totalShelvesCount = orderRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, orders);
 	}
 
 	@Override

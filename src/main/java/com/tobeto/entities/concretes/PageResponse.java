@@ -1,6 +1,6 @@
-package com.tobeto.dto.role;
+package com.tobeto.entities.concretes;
 
-import java.util.UUID;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllRoleResponse {
+public class PageResponse<T> {
 
-	private UUID id;
+	private int count;
 
-	private String role;
+	private List<T> data;
 }
