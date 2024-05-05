@@ -17,6 +17,8 @@ import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.RolesRepository;
 import com.tobeto.dataAccess.UserRepository;
+import com.tobeto.entities.concretes.PageResponse;
+import com.tobeto.entities.concretes.Roles;
 import com.tobeto.entities.concretes.User;
 
 import jakarta.persistence.EntityManager;
@@ -47,13 +49,6 @@ public class UserManager implements UserService {
 	@Override
 	public User create(User user) {
 		userBusinessRules.checkIfEmailExist(user.getEmail());
-
-//		List<Roles> roles = rolesRepository.findAll();
-//		roles = roles.stream().filter(r -> !r.getRole().equals("admin")).toList();
-		// ManytoMany ilişki olduğu için java sınıflarında da iki yönlü ilişki
-		// oluşturmak gerekiyor.
-//		user.setRoles(roles);
-//		roles.forEach(r -> r.getUsers().add(user));
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
@@ -80,22 +75,27 @@ public class UserManager implements UserService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<User> getAll() {
+	public PageResponse<User> getAll() {
 //		List<User> users = userRepository.findAll();
 //		if (users != null) {
 //			users.stream().map(user -> user.getRoles());
 //		}
 //		return users;
 		TypedQuery<User> query = entityManager.createNamedQuery("User.findAll", User.class);
-		return query.getResultList();
+//		return query.getResultList();
+		List<User> users = userRepository.findAll();
+		int totalShelvesCount = userRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, users);
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<User> getAllByPage(int pageNo, int pageSize) {
+	public PageResponse<User> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return userRepository.findAll(pageable).getContent();
+		List<User> users = userRepository.findAll(pageable).getContent();
+		int totalShelvesCount = userRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, users);
 	}
 
 	/**********************************************************************/
@@ -166,5 +166,10 @@ public class UserManager implements UserService {
 	@Override
 	public List<User> searchItem(String keyword) {
 		return userRepository.searchUser(keyword);
+	}
+
+	@Override
+	public List<Roles> getAllRoles() {
+		return rolesRepository.findAll();
 	}
 }
