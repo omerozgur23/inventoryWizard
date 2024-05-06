@@ -9,9 +9,11 @@ public class UpdateCustomerRequest {
 
 	private UUID id;
 
+	private String companyName;
+
 	private String contactName;
 
-	private String email;
+	private String contactEmail;
 
 	private String contactPhone;
 

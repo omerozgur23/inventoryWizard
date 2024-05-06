@@ -4,3 +4,4 @@ insert into users values (unhex(replace(uuid(), '-', '')), 'Şevval', 'Yılmaz',
 insert into users values (unhex(replace(uuid(), '-', '')), 'Tuğçe', 'Dalay', 'tugce@gmail.com', 'tugce');
 insert into users values (unhex(replace(uuid(), '-', '')), 'Sedat', 'Şahin', 'sedat@gmail.com', 'sedat');
 insert into users values (unhex(replace(uuid(), '-', '')), 'Bengisu', 'Karadeniz', 'bengi@gmail.com', 'bengi');
+insert into users values (unhex(replace(uuid(), '-', '')), 'Vildan', 'Karaduman', 'vildan@gmail.com', 'vildan');

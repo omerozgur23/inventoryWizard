@@ -1,6 +1,8 @@
 package com.tobeto.business.concretes;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,20 +12,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.tobeto.business.abstracts.CustomerService;
 import com.tobeto.business.abstracts.ProductService;
+import com.tobeto.business.abstracts.UserService;
 import com.tobeto.business.rules.product.ProductBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
-import com.tobeto.dataAccess.CustomerRepository;
 import com.tobeto.dataAccess.OrderDetailsRepository;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
-import com.tobeto.dataAccess.UserRepository;
-import com.tobeto.dto.product.ProductWithCategoryResponse;
+import com.tobeto.dto.product.ProductItemDTO;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Product;
 import com.tobeto.entities.concretes.User;
 
@@ -36,22 +39,22 @@ public class ProductManager implements ProductService {
 	private ProductRepository productRepository;
 
 	@Autowired
-	private CustomerRepository customerRepository;
-
-	@Autowired
-	private OrderDetailsRepository orderDetailsRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProductBusinessRules productBusinessRules;
+	private ShelfRepository shelfRepository;
 
 	@Autowired
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private ShelfRepository shelfRepository;
+	private OrderDetailsRepository orderDetailsRepository;
+
+	@Autowired
+	private ProductBusinessRules productBusinessRules;
+
+	@Autowired
+	private CustomerService customerService;
+
+	@Autowired
+	private UserService userService;
 
 	/**********************************************************************/
 	/**********************************************************************/
@@ -63,7 +66,16 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public Product update(Product product) {
+	public Product update(Product clientProduct) {
+		Product product = getProduct(clientProduct.getId());
+
+		product.setProductName(clientProduct.getProductName());
+		product.setCriticalCount(clientProduct.getCriticalCount());
+//		product.setCategory(clientProduct.getCategory());
+//		product.setSupplier(clientProduct.getSupplier());
+		product.setPurchasePrice(clientProduct.getPurchasePrice());
+		product.setUnitPrice(clientProduct.getUnitPrice());
+
 		return productRepository.save(product);
 	}
 
@@ -71,17 +83,27 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-		Product product = productRepository.findById(id).orElseThrow();
+		Product product = getProduct(id);
 		productRepository.delete(product);
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Product> getAll() {
+	public PageResponse<Product> getAll() {
 		List<Product> products = productRepository.findAll();
-		// products.forEach(product -> product.setQuantity(50));
-		return products;
+		int totalShelvesCount = productRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, products);
+	}
+
+	/**********************************************************************/
+	/**********************************************************************/
+	@Override
+	public PageResponse<Product> getAllByPage(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		List<Product> products = productRepository.findAll(pageable).getContent();
+		int totalShelvesCount = productRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, products);
 	}
 
 	/**********************************************************************/
@@ -105,50 +127,53 @@ public class ProductManager implements ProductService {
 		if (remainingCount[0] > 0) {
 			productBusinessRules.fillEmptyShelves(remainingCount[0], product);
 		}
+
+		productBusinessRules.setProductQuantity(productId, product);
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public void saleProduct(UUID productId, int count, UUID customerId, UUID userId) {
-		Product product = getProduct(productId);
-		Customer customer = getCustomer(customerId);
-		User user = getUser(userId);
-		int[] remainingCount = new int[] { count };
+	@Transactional
+	public void saleProduct(List<ProductItemDTO> productItems, UUID customerId, UUID userId) {
+		Customer customer = customerService.getCustomer(customerId);
+		User user = userService.getUser(userId);
+		List<OrderDetails> orderDetailsList = new ArrayList<OrderDetails>();
 
-		shelfRepository.findByProductIdNotFull(productId).ifPresent(shelf -> {
-			int saleCount = Math.min(count, shelf.getCount());
-			shelf.setCount(shelf.getCount() - saleCount);
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		String formattedDateTime = now.format(formatter);
 
-			productBusinessRules.clearShelf(shelf);
-			shelfRepository.save(shelf);
-			remainingCount[0] -= saleCount;
+		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
 
-		});
+		for (ProductItemDTO productItem : productItems) {
+			Product product = getProduct(productItem.getProductId());
+			int[] remainingCount = new int[] { productItem.getCount() };
 
-		if (remainingCount[0] > 0)
-			productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
+			shelfRepository.findByProductIdNotFull(productItem.getProductId()).ifPresent(shelf -> {
+				int saleCount = Math.min(productItem.getCount(), shelf.getCount());
+				shelf.setCount(shelf.getCount() - saleCount);
 
-		Order order = new Order();
-		order.setCustomer(customer);
-		order.setEmployee(user);
-		order.setOrderDate(new Date(2024, 03, 26));
+				productBusinessRules.clearShelf(shelf);
+				shelfRepository.save(shelf);
+				remainingCount[0] -= saleCount;
+			});
+
+			if (remainingCount[0] > 0) {
+				productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
+			}
+			OrderDetails orderDetail = OrderDetails.builder().order(order).product(product)
+					.quantity(productItem.getCount()).unitPrice(product.getUnitPrice())
+					.totalPrice(productItem.getCount() * product.getUnitPrice()).build();
+			orderDetailsList.add(orderDetail);
+
+			productBusinessRules.setProductQuantity(productItem.getProductId(), product);
+		}
+		double totalPriceSum = orderDetailsList.stream().mapToDouble(od -> od.getTotalPrice()).sum();
+		order.setOrderPrice(totalPriceSum);
 		orderRepository.save(order);
+		orderDetailsRepository.saveAll(orderDetailsList);
 
-		OrderDetails od = new OrderDetails();
-		od.setOrder(orderRepository.findById(order.getId()).orElseThrow());
-		od.setProduct(product);
-		od.setQuantity(count);
-		od.setUnitPrice(product.getUnitPrice());
-		orderDetailsRepository.save(od);
-
-	}
-
-	/**********************************************************************/
-	/**********************************************************************/
-	@Override
-	public List<ProductWithCategoryResponse> getProductWithCategoryDetails() {
-		return productRepository.getProductWithCategoryDetails();
 	}
 
 	/**********************************************************************/
@@ -164,32 +189,8 @@ public class ProductManager implements ProductService {
 		return product;
 	}
 
-	private Customer getCustomer(UUID customerId) {
-		Optional<Customer> oCustomer = customerRepository.findById(customerId);
-		Customer customer = null;
-		if (oCustomer.isPresent()) {
-			customer = oCustomer.get();
-		} else {
-			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
-		}
-		return customer;
-	}
-
-	private User getUser(UUID userId) {
-		Optional<User> oUser = userRepository.findById(userId);
-		User user = null;
-		if (oUser.isPresent()) {
-			user = oUser.get();
-		} else {
-			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
-		}
-		return user;
-	}
-
 	@Override
-	public List<Product> getAllByPage(int pageNo, int pageSize) {
-		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return productRepository.findAll(pageable).getContent();
+	public List<Product> searchItem(String keyword) {
+		return productRepository.searchProducts(keyword);
 	}
-
 }

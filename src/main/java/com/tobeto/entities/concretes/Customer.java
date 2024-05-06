@@ -7,11 +7,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToMany;  
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @AllArgsConstructor
@@ -31,8 +32,8 @@ public class Customer {
 	@Column(name = "contact_name")
 	private String contactName;
 
-	@Column(name = "email")
-	private String email;
+	@Column(name = "contact_email")
+	private String contactEmail;
 
 	@Column(name = "contact_phone")
 	private String contactPhone;

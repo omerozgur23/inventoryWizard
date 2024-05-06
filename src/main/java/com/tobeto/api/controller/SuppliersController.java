@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.SupplierService;
@@ -17,6 +18,7 @@ import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.supplier.CreateSupplierRequest;
 import com.tobeto.dto.supplier.GetAllSupplierResponse;
 import com.tobeto.dto.supplier.UpdateSupplierRequest;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Supplier;
 
 @RestController
@@ -58,8 +60,25 @@ public class SuppliersController {
 	/**********************************************************************/
 	/**********************************************************************/
 	@GetMapping("/getall")
-	public List<GetAllSupplierResponse> getAll() {
-		List<Supplier> suppliers = supplierService.getAll();
+	public PageResponse<GetAllSupplierResponse> getAll() {
+		PageResponse<Supplier> supplierPage = supplierService.getAll();
+		List<GetAllSupplierResponse> responseList = supplierPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllSupplierResponse.class)).toList();
+		return new PageResponse<>(supplierPage.getCount(), responseList);
+	}
+
+	@GetMapping("/getallByPage")
+	public PageResponse<GetAllSupplierResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<Supplier> supplierPage = supplierService.getAllByPage(pageNo, pageSize);
+		List<GetAllSupplierResponse> responseList = supplierPage.getData().stream()
+				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllSupplierResponse.class)).toList();
+		return new PageResponse<>(supplierPage.getCount(), responseList);
+	}
+
+	@GetMapping("/search")
+	public List<GetAllSupplierResponse> searchSupplier(@RequestParam String keyword) {
+		List<Supplier> suppliers = supplierService.searchItem(keyword);
 		return suppliers.stream().map(supplier -> modelMapper.forResponse().map(supplier, GetAllSupplierResponse.class))
 				.toList();
 	}
