@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,40 +22,39 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
-@Table(name = "orders")
-public class Order {
+@Entity
+@Table(name = "invoices")
+public class Invoice {
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
 	private UUID id;
 
+	@NotNull
+	@NotBlank
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@ManyToOne
-	@JoinColumn(name = "employee_id")
-	private User employee;
+	@NotNull
+	@NotBlank
+	@OneToOne
+	@JoinColumn(name = "order_id")
+	private Order order;
 
-	@Column(name = "order_date")
-	private String orderDate;
+	@NotNull
+	@NotBlank
+	@Column(name = "total_amount")
+	private double totalAmount;
 
-	@Column(name = "order_price")
-	private double orderPrice;
+	@NotNull
+	@NotBlank
+	@Column(name = "waybill_date")
+	private String waybillDate;
 
-	@OneToMany(mappedBy = "order")
-	private List<OrderDetails> orderDetails;
+	@OneToMany(mappedBy = "invoice")
+	private List<InvoiceItem> invoiceItems;
 
-	@OneToOne(mappedBy = "order")
-	private Invoice invoice;
-
-	@Column(name = "invoice_generated")
-	private boolean invoiceGenerated = false;
-
-//	public boolean hasInvoice() {
-//		return this.invoice != null;
-//	}
 }

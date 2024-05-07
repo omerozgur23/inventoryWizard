@@ -22,7 +22,6 @@ import com.tobeto.entities.concretes.Roles;
 import com.tobeto.entities.concretes.User;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -76,12 +75,7 @@ public class UserManager implements UserService {
 	/**********************************************************************/
 	@Override
 	public PageResponse<User> getAll() {
-//		List<User> users = userRepository.findAll();
-//		if (users != null) {
-//			users.stream().map(user -> user.getRoles());
-//		}
-//		return users;
-		TypedQuery<User> query = entityManager.createNamedQuery("User.findAll", User.class);
+//		TypedQuery<User> query = entityManager.createNamedQuery("User.findAll", User.class);
 //		return query.getResultList();
 		List<User> users = userRepository.findAll();
 		int totalShelvesCount = userRepository.findAll().size();
