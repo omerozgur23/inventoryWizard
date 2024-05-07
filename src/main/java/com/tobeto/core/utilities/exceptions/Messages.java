@@ -27,4 +27,10 @@ public record Messages() {
 	public static final String TAX_NUMBER_ALREADY_EXISTS = "Tax number already exists!";
 	public static final String EMAIL_ALREADY_EXISTS = "Email already exists!";
 	public static final String CUSTOMER_ID_NOT_FOUND = "Customer ID not found!";
+
+	// Order Messages
+	public static final String ORDER_ID_NOT_FOUND = "Order ID not found!";
+
+	// Invoice Messages
+	public static final String INVOICE_ALREADY_EXIST = "This order already has an invoice.";
 }

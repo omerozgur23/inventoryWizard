@@ -11,4 +11,6 @@ public interface ProductService extends BaseService<Product> {
 	void acceptProduct(UUID productId, int count);
 
 	void saleProduct(List<ProductItemDTO> productItems, UUID customerId, UUID userId);
+
+	Product getProduct(UUID productId);
 }
