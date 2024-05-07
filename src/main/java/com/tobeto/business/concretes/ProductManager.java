@@ -26,6 +26,7 @@ import com.tobeto.dto.product.ProductItemDTO;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
+import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Product;
 import com.tobeto.entities.concretes.User;
 
@@ -89,17 +90,20 @@ public class ProductManager implements ProductService {
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Product> getAll() {
+	public PageResponse<Product> getAll() {
 		List<Product> products = productRepository.findAll();
-		return products;
+		int totalShelvesCount = productRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, products);
 	}
 
 	/**********************************************************************/
 	/**********************************************************************/
 	@Override
-	public List<Product> getAllByPage(int pageNo, int pageSize) {
+	public PageResponse<Product> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		return productRepository.findAll(pageable).getContent();
+		List<Product> products = productRepository.findAll(pageable).getContent();
+		int totalShelvesCount = productRepository.findAll().size();
+		return new PageResponse<>(totalShelvesCount, products);
 	}
 
 	/**********************************************************************/

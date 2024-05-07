@@ -1,5 +1,9 @@
 package com.tobeto.dto.user;
 
+import java.util.List;
+
+import com.tobeto.dto.RoleDTO;
+
 import lombok.Data;
 
 @Data
@@ -13,5 +17,6 @@ public class CreateUserRequest {
 
 	private String password;
 
-	private String role;
+	private List<RoleDTO> roles;
+
 }
