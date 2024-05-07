@@ -15,6 +15,7 @@ import com.tobeto.business.abstracts.InvoiceService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
 import com.tobeto.dto.SuccessResponse;
 import com.tobeto.dto.invoice.GetAllInvoiceResponse;
+import com.tobeto.dto.invoice.InvoiceCancellationRequest;
 import com.tobeto.entities.concretes.Invoice;
 import com.tobeto.entities.concretes.PageResponse;
 
@@ -30,8 +31,14 @@ public class InvoicesController {
 
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody UUID id) {
-//		Invoice invoice = modelMapper.forRequest().map(request, Invoice.class);
 		invoiceService.create(id);
+		return new SuccessResponse();
+	}
+
+	@PostMapping("/invoicecancellation")
+	public SuccessResponse invoiceCancellation(@RequestBody InvoiceCancellationRequest request) {
+		System.out.println("controller: " + request);
+		invoiceService.invoiceCancellation(request.getInvoiceId(), request.getOrderId());
 		return new SuccessResponse();
 	}
 

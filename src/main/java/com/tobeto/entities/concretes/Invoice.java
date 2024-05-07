@@ -57,4 +57,7 @@ public class Invoice {
 	@OneToMany(mappedBy = "invoice")
 	private List<InvoiceItem> invoiceItems;
 
+	@Column(name = "status")
+	private boolean status = true;
+
 }
