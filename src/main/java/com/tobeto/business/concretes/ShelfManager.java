@@ -74,7 +74,6 @@ public class ShelfManager implements ShelfService {
 		shelfBusinessRules.checkIfShelfEmpty(shelf);
 
 		shelfRepository.deleteById(id);
-
 	}
 
 	/**********************************************************************/
@@ -89,7 +88,7 @@ public class ShelfManager implements ShelfService {
 	@Override
 	public PageResponse<Shelf> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<Shelf> shelves = shelfRepository.findAll(pageable).getContent();
+		List<Shelf> shelves = shelfRepository.findAllOrderByProductIdNotNull(pageable);
 		int totalShelvesCount = shelfRepository.findAll().size();
 		return new PageResponse<>(totalShelvesCount, shelves);
 	}

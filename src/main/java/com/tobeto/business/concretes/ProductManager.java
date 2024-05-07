@@ -92,8 +92,8 @@ public class ProductManager implements ProductService {
 	@Override
 	public PageResponse<Product> getAll() {
 		List<Product> products = productRepository.findAll();
-		int totalShelvesCount = productRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, products);
+		int totalProductsCount = productRepository.findAll().size();
+		return new PageResponse<>(totalProductsCount, products);
 	}
 
 	/**********************************************************************/
@@ -102,8 +102,8 @@ public class ProductManager implements ProductService {
 	public PageResponse<Product> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		List<Product> products = productRepository.findAll(pageable).getContent();
-		int totalShelvesCount = productRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, products);
+		int totalProductsCount = productRepository.findAll().size();
+		return new PageResponse<>(totalProductsCount, products);
 	}
 
 	/**********************************************************************/
@@ -178,7 +178,8 @@ public class ProductManager implements ProductService {
 
 	/**********************************************************************/
 	/**********************************************************************/
-	private Product getProduct(UUID productId) {
+	@Override
+	public Product getProduct(UUID productId) {
 		Optional<Product> oProduct = productRepository.findById(productId);
 		Product product = null;
 		if (oProduct.isPresent()) {
