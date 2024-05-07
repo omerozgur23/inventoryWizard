@@ -52,8 +52,4 @@ public class Order {
 
 	@Column(name = "invoice_generated")
 	private boolean invoiceGenerated = false;
-
-//	public boolean hasInvoice() {
-//		return this.invoice != null;
-//	}
 }

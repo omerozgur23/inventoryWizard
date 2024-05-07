@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.tobeto.business.abstracts.InvoiceService;
 import com.tobeto.business.abstracts.OrderService;
 import com.tobeto.business.abstracts.ProductService;
+import com.tobeto.business.rules.invoice.InvoiceBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.InvoiceItemRepository;
@@ -42,6 +44,9 @@ public class InvoiceManager implements InvoiceService {
 
 	@Autowired
 	private OrderService orderService;
+
+	@Autowired
+	private InvoiceBusinessRules invoiceBusinessRules;
 
 	@Override
 	@Transactional
@@ -88,9 +93,15 @@ public class InvoiceManager implements InvoiceService {
 	}
 
 	@Override
-	public void delete(UUID id) {
-		// TODO Auto-generated method stub
-
+	public Invoice invoiceCancellation(UUID invoiceId, UUID orderId) {
+		System.err.println("manager invoiceId: " + invoiceId);
+		Invoice invoice = getInvoice(invoiceId);
+		System.out.println("manager invoice: " + invoice);
+		invoiceBusinessRules.isStatusFalse(invoice);
+		invoice.setStatus(false);
+		Order order = orderService.getOrder(orderId);
+		order.setInvoiceGenerated(false);
+		return invoice;
 	}
 
 	@Override
@@ -111,6 +122,18 @@ public class InvoiceManager implements InvoiceService {
 	@Override
 	public List<Invoice> searchItem(String keyword) {
 		return invoiceRepository.searchInvoice(keyword);
+	}
+
+	@Override
+	public Invoice getInvoice(UUID invoiceId) {
+		Optional<Invoice> oInvoice = invoiceRepository.findById(invoiceId);
+		Invoice invoice = null;
+		if (oInvoice.isPresent()) {
+			invoice = oInvoice.get();
+		} else {
+			throw new BusinessException(Messages.INVOICE_ID_NOT_FOUND);
+		}
+		return invoice;
 	}
 
 }

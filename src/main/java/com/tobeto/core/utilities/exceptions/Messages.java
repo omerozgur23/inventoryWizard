@@ -32,5 +32,7 @@ public record Messages() {
 	public static final String ORDER_ID_NOT_FOUND = "Order ID not found!";
 
 	// Invoice Messages
+	public static final String INVOICE_ID_NOT_FOUND = "Invoice ID not found!";
 	public static final String INVOICE_ALREADY_EXIST = "This order already has an invoice.";
+	public static final String INVOICE_STATUS_ALREADY_FALSE = "Invoice status already false";
 }

@@ -4,6 +4,7 @@ CREATE TABLE invoices (
   order_id BINARY(16) NOT NULL,
   total_amount DECIMAL NOT NULL,
   waybill_date DATETIME NOT NULL,
+  status BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (id),
   CONSTRAINT inv_cus_cus_fk
     FOREIGN KEY (customer_id)

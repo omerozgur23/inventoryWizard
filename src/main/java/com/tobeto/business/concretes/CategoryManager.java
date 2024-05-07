@@ -81,8 +81,8 @@ public class CategoryManager implements CategoryService {
 	public PageResponse<Category> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		List<Category> categories = categoryRepository.findAll(pageable).getContent();
-		int totalShelvesCount = categoryRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, categories);
+		int totalCategoryCount = categoryRepository.findAll().size();
+		return new PageResponse<>(totalCategoryCount, categories);
 	}
 
 	@Override
