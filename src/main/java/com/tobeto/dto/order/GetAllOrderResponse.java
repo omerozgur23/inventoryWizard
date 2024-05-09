@@ -16,4 +16,6 @@ public class GetAllOrderResponse {
 	private String orderDate;
 
 	private double orderPrice;
+
+	private boolean invoiceGenerated;
 }
