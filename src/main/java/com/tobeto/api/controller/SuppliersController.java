@@ -31,8 +31,6 @@ public class SuppliersController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateSupplierRequest request) {
 		Supplier supplier = modelMapper.forRequest().map(request, Supplier.class);
@@ -40,8 +38,6 @@ public class SuppliersController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PutMapping("/update")
 	public SuccessResponse update(@RequestBody UpdateSupplierRequest request) {
 		Supplier supplier = modelMapper.forRequest().map(request, Supplier.class);
@@ -49,16 +45,12 @@ public class SuppliersController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/delete")
 	public SuccessResponse delete(@RequestBody UUID id) {
 		supplierService.delete(id);
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@GetMapping("/getall")
 	public PageResponse<GetAllSupplierResponse> getAll() {
 		PageResponse<Supplier> supplierPage = supplierService.getAll();

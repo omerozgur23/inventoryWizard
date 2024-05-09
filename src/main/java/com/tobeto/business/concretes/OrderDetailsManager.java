@@ -25,9 +25,11 @@ public class OrderDetailsManager implements OrderDetailsService {
 	}
 
 	@Override
-	public List<OrderDetails> getByOrderId(UUID orderId) {
-		List<OrderDetails> orderDetails = orderDetailsRepository.getOrderDetailsByOrderId(orderId);
-		return orderDetails;
+	public PageResponse<OrderDetails> getByOrderId(UUID orderId, int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		List<OrderDetails> orderDetailsPage = orderDetailsRepository.findByOrderId(orderId, pageable);
+		int totalOrderDetailCount = orderDetailsRepository.findAll().size();
+		return new PageResponse<OrderDetails>(totalOrderDetailCount, orderDetailsPage);
 	}
 
 	@Override

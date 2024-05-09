@@ -10,10 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.OrderService;
+import com.tobeto.business.abstracts.ProductService;
+import com.tobeto.business.rules.order.OrderBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.entities.concretes.Order;
+import com.tobeto.entities.concretes.OrderDetails;
 import com.tobeto.entities.concretes.PageResponse;
 
 @Service
@@ -21,6 +24,12 @@ public class OrderManager implements OrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+
+	@Autowired
+	private OrderBusinessRules orderBusinessRules;
+
+	@Autowired
+	private ProductService productService;
 
 	@Override
 	public List<Order> getAll() {
@@ -38,6 +47,23 @@ public class OrderManager implements OrderService {
 	@Override
 	public List<Order> searchItem(String keyword) {
 		return orderRepository.searchOrder(keyword);
+	}
+
+	@Override
+	public void invoiceCancellation(UUID orderId) {
+		Order order = getOrder(orderId);
+
+		orderBusinessRules.isStatusFalse(order);
+
+		order.setInvoiceGenerated(false);
+		order.setOrderStatus(false);
+
+		for (OrderDetails orderDetail : order.getOrderDetails()) {
+			UUID productId = orderDetail.getProduct().getId();
+			int count = orderDetail.getQuantity();
+			orderDetail.setStatus(false);
+			productService.acceptProduct(productId, count);
+		}
 	}
 
 	@Override

@@ -5,6 +5,7 @@ CREATE TABLE order_details (
   `quantity` INT NOT NULL,
   `unit_price` DECIMAL NOT NULL,
   total_price DECIMAL NOT NULL,
+  status BOOLEAN NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `det_or_or_fk`
     FOREIGN KEY (`order_id`)

@@ -12,7 +12,7 @@ public interface InvoiceService {
 
 	Invoice update(Invoice entity);
 
-	Invoice invoiceCancellation(UUID invoiceId, UUID orderId);
+	void invoiceCancellation(UUID id);
 
 	PageResponse<Invoice> getAll();
 

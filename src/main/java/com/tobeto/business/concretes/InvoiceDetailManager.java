@@ -26,11 +26,19 @@ public class InvoiceDetailManager implements InvoiceDetailService {
 		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceDetails);
 	}
 
+//	@Override
+//	public PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId) {
+//		List<InvoiceItem> invoiceDetails = invoiceItemRepository.getInvoiceDetailByInvoiceId(invoiceId);
+//		int totalInvoiceDetailCount = invoiceItemRepository.findAll().size();
+//		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceDetails);
+//	}
 	@Override
-	public PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId) {
-		List<InvoiceItem> invoiceDetails = invoiceItemRepository.getInvoiceDetailByInvoiceId(invoiceId);
+	public PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId, int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+		List<InvoiceItem> invoiceItemPage = invoiceItemRepository.findByInvoiceId(invoiceId, pageable);
+//		List<InvoiceItem> invoiceDetails = invoiceItemPage.getContent();
 		int totalInvoiceDetailCount = invoiceItemRepository.findAll().size();
-		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceDetails);
+		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceItemPage);
 	}
 
 	@Override

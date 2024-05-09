@@ -36,7 +36,7 @@ public class CustomerManager implements CustomerService {
 
 	@Override
 	public Customer update(Customer clientCustomer) {
-		Customer customer = customerRepository.findById(clientCustomer.getId()).orElseThrow();
+		Customer customer = getCustomer(clientCustomer.getId());
 		customer.setCompanyName(clientCustomer.getCompanyName());
 		customer.setContactName(clientCustomer.getContactName());
 		customer.setContactEmail(clientCustomer.getContactEmail());
