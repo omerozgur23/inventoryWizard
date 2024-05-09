@@ -27,11 +27,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
 						likeKeyword));
 				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("supplier").get("companyName")),
 						likeKeyword));
-
-//				try {
-//					int quantity = Integer.parseInt(keyword);
-//					predicates.add(criteriaBuilder.equal(root.get("quantity"), quantity));
-//				} catch (NumberFormatException e) {
 			}
 
 			return criteriaBuilder.or(predicates.toArray(new Predicate[0]));

@@ -21,7 +21,6 @@ import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Roles;
 import com.tobeto.entities.concretes.User;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -36,14 +35,12 @@ public class UserManager implements UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Autowired
-	private EntityManager entityManager;
+//	@Autowired
+//	private EntityManager entityManager;
 
 	@Autowired
 	private UserBusinessRules userBusinessRules;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Transactional
 	@Override
 	public User create(User user) {
@@ -52,8 +49,6 @@ public class UserManager implements UserService {
 		return userRepository.save(user);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public User update(User clientUser) {
 		User user = userRepository.findById(clientUser.getId()).orElseThrow();
@@ -63,16 +58,12 @@ public class UserManager implements UserService {
 		return userRepository.save(user);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		User user = userRepository.findById(id).orElseThrow();
 		userRepository.delete(user);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<User> getAll() {
 //		TypedQuery<User> query = entityManager.createNamedQuery("User.findAll", User.class);
@@ -82,8 +73,6 @@ public class UserManager implements UserService {
 		return new PageResponse<>(totalShelvesCount, users);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<User> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -92,19 +81,15 @@ public class UserManager implements UserService {
 		return new PageResponse<>(totalShelvesCount, users);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	public String getUserRoles(User user) {
 		if (user.getRoles().size() > 0) {
 			String s = user.getRoles().stream().map(r -> r.getRole()).collect(Collectors.joining(","));
 			return s;
 		} else {
-			return "Rol yok";
+			return "Rol not found";
 		}
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public boolean changePassword(String lastPassword, String newPassword, String email) {
 		Optional<User> users = userRepository.findByEmail(email);
@@ -124,8 +109,6 @@ public class UserManager implements UserService {
 
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public User getUser(UUID userId) {
 		Optional<User> oUser = userRepository.findById(userId);
@@ -138,8 +121,6 @@ public class UserManager implements UserService {
 		return user;
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	@Transactional
 	public Optional<User> getUser(String email) {
@@ -150,8 +131,6 @@ public class UserManager implements UserService {
 		return users;
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);

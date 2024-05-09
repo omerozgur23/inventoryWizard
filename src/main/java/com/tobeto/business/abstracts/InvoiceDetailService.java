@@ -9,7 +9,7 @@ public interface InvoiceDetailService {
 
 	PageResponse<InvoiceItem> getAll();
 
-	PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId);
+	PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId, int pageNo, int pageSize);
 
 	PageResponse<InvoiceItem> getAllByPage(int pageNo, int pageSize);
 }

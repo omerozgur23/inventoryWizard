@@ -10,12 +10,12 @@ public interface OrderService {
 
 	List<Order> getAll();
 
-//	List<Order> getAllByPage(int pageNo, int pageSize);
-
 	List<Order> searchItem(String keyword);
 
 	PageResponse<Order> getAllByPage(int pageNo, int pageSize);
 
 	Order getOrder(UUID orderId);
+
+	void invoiceCancellation(UUID orderId);
 
 }

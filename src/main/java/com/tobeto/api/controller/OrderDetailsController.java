@@ -42,10 +42,13 @@ public class OrderDetailsController {
 	}
 
 	@GetMapping("/getByOrderId")
-	public List<GetAllOrderDetailsResponse> getByOrderId(@RequestParam UUID orderId) {
-		List<OrderDetails> orderDetails = orderDetailsService.getByOrderId(orderId);
-		return orderDetails.stream().map(od -> modelMapper.forResponse().map(od, GetAllOrderDetailsResponse.class))
+	public PageResponse<GetAllOrderDetailsResponse> getByOrderId(@RequestParam UUID orderId,
+			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<OrderDetails> orderDetailPage = orderDetailsService.getByOrderId(orderId, pageNo, pageSize);
+		List<GetAllOrderDetailsResponse> responseList = orderDetailPage.getData().stream()
+				.map(orderDetail -> modelMapper.forResponse().map(orderDetail, GetAllOrderDetailsResponse.class))
 				.toList();
+		return new PageResponse<>(orderDetailPage.getCount(), responseList);
 	}
 
 }

@@ -17,8 +17,7 @@ public class WebConfig {
 				registry.addMapping("/**").allowedOrigins("http://localhost:4200") // İzin verilen origin (Angular
 																					// uygulamasının URL'si)
 						.allowedMethods("GET", "POST", "PUT", "DELETE") // İzin verilen HTTP metodları
-						.allowedHeaders("*") // İzin verilen başlıklar
-						.allowCredentials(true);
+						.allowedHeaders("*").allowCredentials(true);
 			}
 		};
 	}
