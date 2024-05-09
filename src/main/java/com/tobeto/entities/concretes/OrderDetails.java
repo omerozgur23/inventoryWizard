@@ -35,9 +35,15 @@ public class OrderDetails {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
+	@Column(name = "unit_price")
 	private double unitPrice;
 
+	@Column(name = "total_price")
 	private double totalPrice;
 
+	@Column(name = "quantity")
 	private int quantity;
+
+	@Column(name = "status")
+	private boolean status;
 }

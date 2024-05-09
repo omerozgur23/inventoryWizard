@@ -53,10 +53,12 @@ public class InvoiceManager implements InvoiceService {
 	public Invoice create(UUID id) {
 
 		Order order = orderService.getOrder(id);
-		boolean invoiceGenerated = order.isInvoiceGenerated();
-
-		if (invoiceGenerated)
-			throw new BusinessException(Messages.INVOICE_ALREADY_EXIST);
+		invoiceBusinessRules.isOrderStatusFalse(order);
+		invoiceBusinessRules.isInvoiceAlreadyExıst(order);
+//		boolean invoiceGenerated = order.isInvoiceGenerated();
+//
+//		if (invoiceGenerated)
+//			throw new BusinessException(Messages.INVOICE_ALREADY_EXIST);
 
 		order.setInvoiceGenerated(true);
 
@@ -71,14 +73,14 @@ public class InvoiceManager implements InvoiceService {
 		String formattedDateTime = now.format(formatter);
 
 		Invoice invoice = Invoice.builder().order(order).customer(customer).totalAmount(totalAmount)
-				.waybillDate(formattedDateTime).build();
+				.waybillDate(formattedDateTime).status(true).build();
 		Invoice savedInvoice = invoiceRepository.save(invoice);
 
 		for (OrderDetails item : orderDetails) {
 			Product product = productService.getProduct(item.getProduct().getId());
 			InvoiceItem invoiceItem = InvoiceItem.builder().invoice(savedInvoice).product(product)
 					.quantity(item.getQuantity()).unitPrice(item.getUnitPrice()).totalPrice(item.getTotalPrice())
-					.build();
+					.status(true).build();
 			invoiceItemsList.add(invoiceItem);
 		}
 
@@ -88,20 +90,20 @@ public class InvoiceManager implements InvoiceService {
 
 	@Override
 	public Invoice update(Invoice entity) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Invoice invoiceCancellation(UUID invoiceId, UUID orderId) {
-		System.err.println("manager invoiceId: " + invoiceId);
-		Invoice invoice = getInvoice(invoiceId);
-		System.out.println("manager invoice: " + invoice);
+	@Transactional
+	public void invoiceCancellation(UUID id) {
+		Invoice invoice = getInvoice(id);
 		invoiceBusinessRules.isStatusFalse(invoice);
 		invoice.setStatus(false);
-		Order order = orderService.getOrder(orderId);
-		order.setInvoiceGenerated(false);
-		return invoice;
+
+		for (InvoiceItem invoiceItems : invoice.getInvoiceItems()) {
+			invoiceItems.setStatus(false);
+		}
+		orderService.invoiceCancellation(invoice.getOrder().getId());
 	}
 
 	@Override

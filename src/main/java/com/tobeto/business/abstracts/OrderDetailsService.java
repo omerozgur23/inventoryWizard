@@ -10,7 +10,7 @@ public interface OrderDetailsService {
 
 	List<OrderDetails> getAll();
 
-	List<OrderDetails> getByOrderId(UUID orderId);
+	PageResponse<OrderDetails> getByOrderId(UUID orderId, int pageNo, int pageSize);
 
 	PageResponse<OrderDetails> getAllByPage(int pageNo, int pageSize);
 }

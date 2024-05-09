@@ -5,6 +5,7 @@ CREATE TABLE invoice_items (
   quantity INT NOT NULL,
   unit_price DECIMAL NOT NULL,
   total_amount DECIMAL NOT NULL,
+  status BOOLEAN NOT NULL,
   PRIMARY KEY (id),
   CONSTRAINT invitem_inv_inv_fk
     FOREIGN KEY (invoice_id)
