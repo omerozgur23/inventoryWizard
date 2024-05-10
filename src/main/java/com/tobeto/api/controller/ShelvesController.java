@@ -31,16 +31,12 @@ public class ShelvesController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateShelfRequest request) {
 		shelfService.create(modelMapper.forRequest().map(request, Shelf.class));
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PutMapping("/update")
 	public SuccessResponse update(@RequestBody UpdateShelfRequest request) {
 		Shelf shelf = modelMapper.forRequest().map(request, Shelf.class);
@@ -48,16 +44,12 @@ public class ShelvesController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/delete")
 	public SuccessResponse delete(@RequestBody UUID id) {
 		shelfService.delete(id);
 		return new SuccessResponse();
 	};
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@GetMapping("/getall")
 	public PageResponse<GetAllShelfResponse> getAll() {
 		PageResponse<Shelf> shelfPage = shelfService.getAll();

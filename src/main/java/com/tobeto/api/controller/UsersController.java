@@ -37,8 +37,6 @@ public class UsersController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateUserRequest request) {
 		User user = modelMapper.forRequest().map(request, User.class);
@@ -46,8 +44,6 @@ public class UsersController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PutMapping("/update")
 	private SuccessResponse update(@RequestBody UpdateUserRequest request) {
 		User user = modelMapper.forRequest().map(request, User.class);
@@ -55,16 +51,12 @@ public class UsersController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/delete")
 	public SuccessResponse delete(@RequestBody UUID id) {
 		userService.delete(id);
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@GetMapping("/getall")
 	public ResponseEntity<PageResponse<GetAllUserResponse>> getAll() {
 //		List<User> users = userService.getAll();
@@ -88,8 +80,6 @@ public class UsersController {
 		return ResponseEntity.ok(new PageResponse<>(userPage.getCount(), result));
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@GetMapping("/getallByPage")
 	public ResponseEntity<PageResponse<GetAllUserResponse>> getAllProductsByPage(
 			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "18") int pageSize) {
@@ -106,8 +96,6 @@ public class UsersController {
 		return ResponseEntity.ok(new PageResponse<>(userPage.getCount(), result));
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/changePassword")
 	public SuccessResponse sifreDegistir(@RequestBody PasswordChangeRequest request, Principal principal) {
 		userService.changePassword(request.getLastPassword(), request.getNewPassword(), principal.getName());

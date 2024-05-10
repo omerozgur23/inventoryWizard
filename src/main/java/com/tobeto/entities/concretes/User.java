@@ -23,8 +23,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
 @Table(name = "users")
-//@ToString(exclude = { "roles" })
-//@EqualsAndHashCode(exclude = { "roles" })
 public class User {
 
 	@Id

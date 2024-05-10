@@ -1,5 +1,6 @@
 package com.tobeto.entities.concretes;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -8,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +20,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
-@Table(name = "order_details")
-public class OrderDetails {
+@Entity
+@Table(name = "invoices")
+public class Invoice {
 
 	@Id
 	@GeneratedValue
@@ -28,22 +31,23 @@ public class OrderDetails {
 	private UUID id;
 
 	@ManyToOne
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
+
+	@OneToOne
 	@JoinColumn(name = "order_id")
 	private Order order;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id")
-	private Product product;
+	@Column(name = "total_amount")
+	private double totalAmount;
 
-	@Column(name = "unit_price")
-	private double unitPrice;
+	@Column(name = "waybill_date")
+	private String waybillDate;
 
-	@Column(name = "total_price")
-	private double totalPrice;
-
-	@Column(name = "quantity")
-	private int quantity;
+	@OneToMany(mappedBy = "invoice")
+	private List<InvoiceItem> invoiceItems;
 
 	@Column(name = "status")
-	private boolean status;
+	private boolean status = true;
+
 }

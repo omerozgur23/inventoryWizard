@@ -25,9 +25,6 @@ public class ShelfManager implements ShelfService {
 	@Autowired
 	private ShelfBusinessRules shelfBusinessRules;
 
-	/**********************************************************************/
-	/**********************************************************************/
-
 	@Override
 	public Shelf create(Shelf shelf) {
 		long currentShelfCount = shelfRepository.count();
@@ -52,8 +49,6 @@ public class ShelfManager implements ShelfService {
 		return shelf;
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Shelf update(Shelf clientShelf) {
 		Shelf shelf = shelfRepository.findById(clientShelf.getId()).orElseThrow();
@@ -63,22 +58,16 @@ public class ShelfManager implements ShelfService {
 
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
-//		shelfBusinessRules.checkIfByIdExists(id);
 		Shelf shelf = shelfRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(Messages.SHELF_ID_NOT_FOUND));
 
 		shelfBusinessRules.checkIfShelfEmpty(shelf);
 
 		shelfRepository.deleteById(id);
-
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Shelf> getAll() {
 		List<Shelf> shelves = shelfRepository.findAll();
@@ -89,7 +78,7 @@ public class ShelfManager implements ShelfService {
 	@Override
 	public PageResponse<Shelf> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<Shelf> shelves = shelfRepository.findAll(pageable).getContent();
+		List<Shelf> shelves = shelfRepository.findAllOrderByProductIdNotNull(pageable);
 		int totalShelvesCount = shelfRepository.findAll().size();
 		return new PageResponse<>(totalShelvesCount, shelves);
 	}

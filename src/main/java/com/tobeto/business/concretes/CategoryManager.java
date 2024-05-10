@@ -25,8 +25,6 @@ public class CategoryManager implements CategoryService {
 	@Autowired
 	private CategoryBusinessRules categoryBusinessRules;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Category create(Category category) {
 
@@ -44,8 +42,6 @@ public class CategoryManager implements CategoryService {
 		return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Category update(Category clientCategory) {
 		Category category = categoryRepository.findById(clientCategory.getId())
@@ -57,8 +53,6 @@ public class CategoryManager implements CategoryService {
 		return categoryRepository.save(category);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		Category category = categoryRepository.findById(id)
@@ -66,23 +60,19 @@ public class CategoryManager implements CategoryService {
 		categoryRepository.delete(category);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Category> getAll() {
 		List<Category> categories = categoryRepository.findAll();
-		int totalShelvesCount = categoryRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, categories);
+		int totalCategoriesCount = categoryRepository.findAll().size();
+		return new PageResponse<>(totalCategoriesCount, categories);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Category> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		List<Category> categories = categoryRepository.findAll(pageable).getContent();
-		int totalShelvesCount = categoryRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, categories);
+		int totalCategoryCount = categoryRepository.findAll().size();
+		return new PageResponse<>(totalCategoryCount, categories);
 	}
 
 	@Override
