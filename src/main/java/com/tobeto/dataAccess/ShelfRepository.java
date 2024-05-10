@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,9 @@ import com.tobeto.entities.concretes.Shelf;
 import jakarta.persistence.criteria.Predicate;
 
 public interface ShelfRepository extends JpaRepository<Shelf, UUID>, JpaSpecificationExecutor<Shelf> {
+
+	@Query("SELECT s FROM Shelf s  ORDER BY s.product DESC")
+	List<Shelf> findAllOrderByProductIdNotNull(Pageable pageable);
 
 	@Query("SELECT s FROM Shelf s WHERE s.product.id = :productId and s.count < s.capacity")
 	Optional<Shelf> findByProductIdNotFull(UUID productId);

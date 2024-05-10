@@ -7,28 +7,22 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import com.tobeto.entities.concretes.Product;
+import com.tobeto.entities.concretes.Invoice;
 
 import jakarta.persistence.criteria.Predicate;
 
-public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpecificationExecutor<Product> {
+public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpecificationExecutor<Invoice> {
 
-	boolean existsByProductName(String name);
-
-	default List<Product> searchProducts(String keyword) {
+	default List<Invoice> searchInvoice(String keyword) {
 		return findAll((root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
 			if (keyword != null && !keyword.isEmpty()) {
 				String likeKeyword = "%" + keyword + "%";
 
-				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), likeKeyword));
-				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")),
-						likeKeyword));
-				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("supplier").get("companyName")),
+				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("customer").get("companyName")),
 						likeKeyword));
 			}
-
 			return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
 		});
 	}

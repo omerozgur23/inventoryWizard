@@ -31,8 +31,6 @@ public class CategoriesController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateCategoryRequest request) {
 		Category category = modelMapper.forRequest().map(request, Category.class);
@@ -40,8 +38,6 @@ public class CategoriesController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PutMapping("/update")
 	public SuccessResponse update(@RequestBody UpdateCategoryRequest request) {
 		Category category = modelMapper.forRequest().map(request, Category.class);
@@ -49,16 +45,12 @@ public class CategoriesController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/delete")
 	public SuccessResponse delete(@RequestBody UUID id) {
 		categoryService.delete(id);
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@GetMapping("/getall")
 	public PageResponse<GetAllCategoryResponse> getAll() {
 		PageResponse<Category> categoryPage = categoryService.getAll();

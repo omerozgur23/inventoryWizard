@@ -19,15 +19,11 @@ public class SupplierManager implements SupplierService {
 	@Autowired
 	private SupplierRepository supplierRepository;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Supplier create(Supplier supplier) {
 		return supplierRepository.save(supplier);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Supplier update(Supplier clientSupplier) {
 		Supplier supplier = supplierRepository.findById(clientSupplier.getId()).orElseThrow();
@@ -39,16 +35,12 @@ public class SupplierManager implements SupplierService {
 		return supplierRepository.save(supplier);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		Supplier supplier = supplierRepository.findById(id).orElseThrow();
 		supplierRepository.delete(supplier);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Supplier> getAll() {
 		List<Supplier> suppliers = supplierRepository.findAll();
@@ -56,8 +48,6 @@ public class SupplierManager implements SupplierService {
 		return new PageResponse<>(totalShelvesCount, suppliers);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Supplier> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
