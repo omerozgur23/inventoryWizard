@@ -56,15 +56,11 @@ public class ProductManager implements ProductService {
 	@Autowired
 	private UserService userService;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Product create(Product product) {
 		return productRepository.save(product);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Product update(Product clientProduct) {
 		Product product = getProduct(clientProduct.getId());
@@ -79,16 +75,12 @@ public class ProductManager implements ProductService {
 		return productRepository.save(product);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public void delete(UUID id) {
 		Product product = getProduct(id);
 		productRepository.delete(product);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Product> getAll() {
 		List<Product> products = productRepository.findAll();
@@ -96,8 +88,6 @@ public class ProductManager implements ProductService {
 		return new PageResponse<>(totalProductsCount, products);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public PageResponse<Product> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -106,8 +96,6 @@ public class ProductManager implements ProductService {
 		return new PageResponse<>(totalProductsCount, products);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Transactional
 	public void acceptProduct(UUID productId, int count) {
 		Product product = getProduct(productId);
@@ -131,8 +119,6 @@ public class ProductManager implements ProductService {
 		productBusinessRules.setProductQuantity(productId, product);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	@Transactional
 	public void saleProduct(List<ProductItemDTO> productItems, UUID customerId, UUID userId) {
@@ -144,7 +130,8 @@ public class ProductManager implements ProductService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		String formattedDateTime = now.format(formatter);
 
-		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
+		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).orderStatus(true)
+				.build();
 
 		for (ProductItemDTO productItem : productItems) {
 			Product product = getProduct(productItem.getProductId());
@@ -164,7 +151,7 @@ public class ProductManager implements ProductService {
 			}
 			OrderDetails orderDetail = OrderDetails.builder().order(order).product(product)
 					.quantity(productItem.getCount()).unitPrice(product.getUnitPrice())
-					.totalPrice(productItem.getCount() * product.getUnitPrice()).build();
+					.totalPrice(productItem.getCount() * product.getUnitPrice()).status(true).build();
 			orderDetailsList.add(orderDetail);
 
 			productBusinessRules.setProductQuantity(productItem.getProductId(), product);
@@ -176,8 +163,6 @@ public class ProductManager implements ProductService {
 
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@Override
 	public Product getProduct(UUID productId) {
 		Optional<Product> oProduct = productRepository.findById(productId);

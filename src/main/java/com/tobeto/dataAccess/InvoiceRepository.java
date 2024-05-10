@@ -13,18 +13,6 @@ import jakarta.persistence.criteria.Predicate;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpecificationExecutor<Invoice> {
 
-//	@Query("SELECT o.customer FROM Order o WHERE o.id = :orderId")
-//	Customer getCustomerIdFromOrders(UUID orderId);
-//
-//	@Query("SELECT o.orderPrice FROM Order o WHERE o.id = :orderId")
-//	double getTotalPriceFromOrders(UUID orderId);
-//
-//	@Query("SELECT od FROM OrderDetails od WHERE od.order.id = :orderId")
-//	List<OrderDetails> getProductsFromOrderDetails(UUID orderId);
-
-//	@Query("SELECT o.id FROM Order o WHERE o.id = :orderId")
-//	Order getOrder(UUID orderId);
-
 	default List<Invoice> searchInvoice(String keyword) {
 		return findAll((root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();

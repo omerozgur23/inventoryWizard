@@ -12,8 +12,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,29 +30,24 @@ public class Invoice {
 	@Column(name = "id")
 	private UUID id;
 
-	@NotNull
-	@NotBlank
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@NotNull
-	@NotBlank
 	@OneToOne
 	@JoinColumn(name = "order_id")
 	private Order order;
 
-	@NotNull
-	@NotBlank
 	@Column(name = "total_amount")
 	private double totalAmount;
 
-	@NotNull
-	@NotBlank
 	@Column(name = "waybill_date")
 	private String waybillDate;
 
 	@OneToMany(mappedBy = "invoice")
 	private List<InvoiceItem> invoiceItems;
+
+	@Column(name = "status")
+	private boolean status = true;
 
 }

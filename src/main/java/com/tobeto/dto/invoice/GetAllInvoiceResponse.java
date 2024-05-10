@@ -16,4 +16,6 @@ public class GetAllInvoiceResponse {
 	private double totalAmount;
 
 	private String waybillDate;
+
+	private boolean status;
 }

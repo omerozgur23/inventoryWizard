@@ -33,8 +33,6 @@ public class ProductsController {
 	@Autowired
 	private ModelMapperService modelMapper;
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody CreateProductRequest request) {
 		Product product = modelMapper.forRequest().map(request, Product.class);
@@ -42,8 +40,6 @@ public class ProductsController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PutMapping("/update")
 	public SuccessResponse update(@RequestBody UpdateProductRequest request) {
 		Product product = modelMapper.forRequest().map(request, Product.class);
@@ -51,16 +47,12 @@ public class ProductsController {
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/delete")
 	public SuccessResponse delete(@RequestBody UUID id) {
 		productService.delete(id);
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@GetMapping("/getall")
 	public PageResponse<GetAllProductResponse> getAll() {
 		PageResponse<Product> productPage = productService.getAll();
@@ -69,16 +61,12 @@ public class ProductsController {
 		return new PageResponse<>(productPage.getCount(), responseList);
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/accept")
 	public SuccessResponse acceptFruit(@RequestBody AcceptProductRequest request) {
 		productService.acceptProduct(request.getProductId(), request.getCount());
 		return new SuccessResponse();
 	}
 
-	/**********************************************************************/
-	/**********************************************************************/
 	@PostMapping("/sale")
 	public SuccessResponse saleProduct(@RequestBody SaleProductRequest request) {
 		productService.saleProduct(request.getProductItems(), request.getCustomerId(), request.getUserId());

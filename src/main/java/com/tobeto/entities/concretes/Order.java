@@ -50,10 +50,9 @@ public class Order {
 	@OneToOne(mappedBy = "order")
 	private Invoice invoice;
 
+	@Column(name = "order_status")
+	private boolean orderStatus;
+
 	@Column(name = "invoice_generated")
 	private boolean invoiceGenerated = false;
-
-//	public boolean hasInvoice() {
-//		return this.invoice != null;
-//	}
 }

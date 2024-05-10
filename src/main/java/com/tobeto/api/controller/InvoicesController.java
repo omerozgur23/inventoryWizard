@@ -30,8 +30,13 @@ public class InvoicesController {
 
 	@PostMapping("/create")
 	public SuccessResponse create(@RequestBody UUID id) {
-//		Invoice invoice = modelMapper.forRequest().map(request, Invoice.class);
 		invoiceService.create(id);
+		return new SuccessResponse();
+	}
+
+	@PostMapping("/cancellation")
+	public SuccessResponse invoiceCancellation(@RequestBody UUID id) {
+		invoiceService.invoiceCancellation(id);
 		return new SuccessResponse();
 	}
 

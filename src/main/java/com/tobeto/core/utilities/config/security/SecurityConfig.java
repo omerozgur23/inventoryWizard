@@ -37,8 +37,8 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/supplier/create").hasRole("Admin").requestMatchers("/api/v1/supplier/update")
 				.hasRole("Admin").requestMatchers("/api/v1/customer/delete").hasRole("Admin")
 				.requestMatchers("/api/v1/invoice/create").hasAnyRole("Admin", "Warehouse Supervisor")
-				.requestMatchers("/api/v1/invoice/update").hasRole("Admin").requestMatchers("/api/v1/invoice/delete")
-				.hasRole("Admin").anyRequest().authenticated())
+				.requestMatchers("/api/v1/invoice/update").hasRole("Admin")
+				.requestMatchers("/api/v1/invoice/cancellation").hasRole("Admin").anyRequest().authenticated())
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 

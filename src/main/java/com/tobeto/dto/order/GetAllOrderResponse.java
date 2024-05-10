@@ -17,5 +17,7 @@ public class GetAllOrderResponse {
 
 	private double orderPrice;
 
+	private boolean orderStatus;
+
 	private boolean invoiceGenerated;
 }

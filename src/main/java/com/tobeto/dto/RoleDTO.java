@@ -8,6 +8,4 @@ import lombok.Data;
 public class RoleDTO {
 
 	private UUID id;
-
-//	private String role;
 }

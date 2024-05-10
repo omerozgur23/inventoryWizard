@@ -12,11 +12,13 @@ public interface InvoiceService {
 
 	Invoice update(Invoice entity);
 
-	void delete(UUID id);
+	void invoiceCancellation(UUID id);
 
 	PageResponse<Invoice> getAll();
 
 	PageResponse<Invoice> getAllByPage(int pageNo, int pageSize);
 
 	List<Invoice> searchItem(String keyword);
+
+	Invoice getInvoice(UUID invoiceId);;
 }
