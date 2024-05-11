@@ -67,8 +67,8 @@ public class ProductManager implements ProductService {
 
 		product.setProductName(clientProduct.getProductName());
 		product.setCriticalCount(clientProduct.getCriticalCount());
-//		product.setCategory(clientProduct.getCategory());
-//		product.setSupplier(clientProduct.getSupplier());
+		product.setCategory(clientProduct.getCategory());
+		product.setSupplier(clientProduct.getSupplier());
 		product.setPurchasePrice(clientProduct.getPurchasePrice());
 		product.setUnitPrice(clientProduct.getUnitPrice());
 
@@ -133,6 +133,7 @@ public class ProductManager implements ProductService {
 		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).orderStatus(true)
 				.build();
 
+		// Yarı dolu raftan satış
 		for (ProductItemDTO productItem : productItems) {
 			Product product = getProduct(productItem.getProductId());
 			int[] remainingCount = new int[] { productItem.getCount() };
@@ -146,6 +147,7 @@ public class ProductManager implements ProductService {
 				remainingCount[0] -= saleCount;
 			});
 
+			// Tam dolu raftan satış
 			if (remainingCount[0] > 0) {
 				productBusinessRules.fullShelfSaleProduct(remainingCount[0], product);
 			}
