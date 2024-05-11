@@ -21,7 +21,7 @@ public class ShelfBusinessRules {
 	}
 
 	public void checkCapacityGreater(int capacity) {
-		if (capacity > 5) {
+		if (capacity > 10) {
 			throw new BusinessException(Messages.CAPACITY_CANNOT_BE_BIG);
 		}
 	}
