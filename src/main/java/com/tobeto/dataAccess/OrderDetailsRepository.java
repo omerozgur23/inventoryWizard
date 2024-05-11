@@ -17,8 +17,8 @@ public interface OrderDetailsRepository extends JpaRepository<OrderDetails, UUID
 
 	List<OrderDetails> findByOrderId(UUID orderId, Pageable pageable);
 
-	@Query("SELECT new com.tobeto.dto.report.GetBestSellingProductsResponse(p.id, p.productName, p.quantity, p.purchasePrice, p.unitPrice, COUNT(od.product.id) AS count) "
-			+ "FROM OrderDetails od JOIN od.product p "
+	@Query("SELECT new com.tobeto.dto.report.GetBestSellingProductsResponse(p.id, p.productName, p.quantity, p.purchasePrice, p.unitPrice, SUM(od.quantity) AS count) "
+			+ "FROM OrderDetails od JOIN od.product p " + "WHERE od.status = true "
 			+ "GROUP BY p.id, p.productName, p.quantity, p.purchasePrice, p.unitPrice " + "ORDER BY count DESC LIMIT 5")
 	List<GetBestSellingProductsResponse> getBestSellingProducts();
 

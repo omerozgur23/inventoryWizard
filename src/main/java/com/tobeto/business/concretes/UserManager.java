@@ -55,6 +55,7 @@ public class UserManager implements UserService {
 		clientUser.setPassword(passwordEncoder.encode(clientUser.getPassword()));
 		user.setEmail(clientUser.getEmail());
 		user.setPassword(clientUser.getPassword());
+		user.setRoles(clientUser.getRoles());
 		return userRepository.save(user);
 	}
 

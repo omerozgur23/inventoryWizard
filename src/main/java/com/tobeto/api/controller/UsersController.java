@@ -59,15 +59,6 @@ public class UsersController {
 
 	@GetMapping("/getall")
 	public ResponseEntity<PageResponse<GetAllUserResponse>> getAll() {
-//		List<User> users = userService.getAll();
-//		List<GetAllUserResponse> result = new ArrayList<>();
-//		users.forEach(user -> {
-//			GetAllUserResponse response = modelMapper.forResponse().map(user, GetAllUserResponse.class);
-//
-//			response.setRole(userService.getUserRoles(user));
-//			result.add(response);
-//		});
-//		return ResponseEntity.ok(result);
 		PageResponse<User> userPage = userService.getAll();
 		List<GetAllUserResponse> result = new ArrayList<>();
 
@@ -82,7 +73,7 @@ public class UsersController {
 
 	@GetMapping("/getallByPage")
 	public ResponseEntity<PageResponse<GetAllUserResponse>> getAllProductsByPage(
-			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "18") int pageSize) {
+			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize) {
 		PageResponse<User> userPage = userService.getAllByPage(pageNo, pageSize);
 
 		List<GetAllUserResponse> result = new ArrayList<>();
