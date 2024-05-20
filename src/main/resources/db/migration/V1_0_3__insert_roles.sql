@@ -1,4 +1,6 @@
-insert into roles values (unhex(replace(uuid(), '-', '')), 'Admin');
-insert into roles values (unhex(replace(uuid(), '-', '')), 'Warehouse Supervisor');
-insert into roles values (unhex(replace(uuid(), '-', '')), 'Reporter');
+insert into roles (id, role) 
+values 
+	(unhex(replace(uuid(), '-', '')), 'Admin'),
+	(unhex(replace(uuid(), '-', '')), 'Warehouse Supervisor'),
+	(unhex(replace(uuid(), '-', '')), 'Reporter')
 

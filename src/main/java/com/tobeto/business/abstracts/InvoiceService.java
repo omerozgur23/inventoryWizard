@@ -1,24 +1,28 @@
 package com.tobeto.business.abstracts;
 
-import java.util.List;
 import java.util.UUID;
 
+import com.tobeto.core.utilities.exceptions.BusinessException;
+import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.entities.concretes.Invoice;
-import com.tobeto.entities.concretes.PageResponse;
 
-public interface InvoiceService {
+public interface InvoiceService extends BaseService<Invoice> {
+
+	default Invoice create(Invoice entity) {
+		throw new BusinessException(Messages.THIS_METHOD_DOES_NOT_WORK);
+	};
+
+	default Invoice update(Invoice entity) {
+		throw new BusinessException(Messages.THIS_METHOD_DOES_NOT_WORK);
+	};
+
+	default void delete(UUID id) {
+		throw new BusinessException(Messages.THIS_METHOD_DOES_NOT_WORK);
+	};
 
 	Invoice create(UUID id);
 
-	Invoice update(Invoice entity);
-
 	void invoiceCancellation(UUID id);
 
-	PageResponse<Invoice> getAll();
-
-	PageResponse<Invoice> getAllByPage(int pageNo, int pageSize);
-
-	List<Invoice> searchItem(String keyword);
-
-	Invoice getInvoice(UUID invoiceId);;
+	Invoice getInvoice(UUID invoiceId);
 }

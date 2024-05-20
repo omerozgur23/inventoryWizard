@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.InvoiceDetailService;
 import com.tobeto.dataAccess.InvoiceItemRepository;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.entities.concretes.InvoiceItem;
-import com.tobeto.entities.concretes.PageResponse;
 
 @Service
 public class InvoiceDetailManager implements InvoiceDetailService {
@@ -26,12 +26,6 @@ public class InvoiceDetailManager implements InvoiceDetailService {
 		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceDetails);
 	}
 
-//	@Override
-//	public PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId) {
-//		List<InvoiceItem> invoiceDetails = invoiceItemRepository.getInvoiceDetailByInvoiceId(invoiceId);
-//		int totalInvoiceDetailCount = invoiceItemRepository.findAll().size();
-//		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceDetails);
-//	}
 	@Override
 	public PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId, int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -40,13 +34,4 @@ public class InvoiceDetailManager implements InvoiceDetailService {
 		int totalInvoiceDetailCount = invoiceItemRepository.findAll().size();
 		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceItemPage);
 	}
-
-	@Override
-	public PageResponse<InvoiceItem> getAllByPage(int pageNo, int pageSize) {
-		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<InvoiceItem> invoiceDetails = invoiceItemRepository.findAll(pageable).getContent();
-		int totalInvoiceDetailCount = invoiceItemRepository.findAll().size();
-		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceDetails);
-	}
-
 }

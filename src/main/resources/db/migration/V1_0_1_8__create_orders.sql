@@ -1,11 +1,13 @@
 CREATE TABLE orders (
-  `id` BINARY(16) NOT NULL,
-  `customer_id` BINARY(16) NOT NULL,
-  `employee_id` BINARY(16) NOT NULL,
-  `order_date` DATETIME NOT NULL,
+  id BINARY(16) NOT NULL,
+  customer_id BINARY(16) NOT NULL,
+  employee_id BINARY(16) NOT NULL,
+  order_date DATETIME NOT NULL,
   order_price DECIMAL NOT NULL,
-  order_status BOOLEAN NOT NULL,
   invoice_generated BOOLEAN NOT NULL DEFAULT FALSE,
+  status ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE' NOT NULL,
+  created_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  inactive_date DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `or_cus_cus_fk`
     FOREIGN KEY (`customer_id`)
