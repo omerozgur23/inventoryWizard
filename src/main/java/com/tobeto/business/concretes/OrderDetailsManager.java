@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.OrderDetailsService;
 import com.tobeto.dataAccess.OrderDetailsRepository;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.entities.concretes.OrderDetails;
-import com.tobeto.entities.concretes.PageResponse;
 
 @Service
 public class OrderDetailsManager implements OrderDetailsService {
@@ -20,8 +20,10 @@ public class OrderDetailsManager implements OrderDetailsService {
 	private OrderDetailsRepository orderDetailsRepository;
 
 	@Override
-	public List<OrderDetails> getAll() {
-		return orderDetailsRepository.findAll();
+	public PageResponse<OrderDetails> getAll() {
+		List<OrderDetails> orderDetials = orderDetailsRepository.findAll();
+		int totalOrderDetailCount = orderDetailsRepository.findAll().size();
+		return new PageResponse<OrderDetails>(totalOrderDetailCount, orderDetials);
 	}
 
 	@Override
@@ -31,13 +33,4 @@ public class OrderDetailsManager implements OrderDetailsService {
 		int totalOrderDetailCount = orderDetailsRepository.findAll().size();
 		return new PageResponse<OrderDetails>(totalOrderDetailCount, orderDetailsPage);
 	}
-
-	@Override
-	public PageResponse<OrderDetails> getAllByPage(int pageNo, int pageSize) {
-		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<OrderDetails> orderDetails = orderDetailsRepository.findAll(pageable).getContent();
-		int totalShelvesCount = orderDetailsRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, orderDetails);
-	}
-
 }

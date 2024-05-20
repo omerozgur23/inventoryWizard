@@ -12,7 +12,6 @@ public class ShelfBusinessRules {
 
 	public void checkIfShelfEmpty(Shelf shelf) {
 		Product product = shelf.getProduct();
-
 		if (product == null || product.getProductName() == null || product.getProductName().isEmpty()) {
 			return;
 		} else {

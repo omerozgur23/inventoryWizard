@@ -15,9 +15,10 @@ import com.tobeto.business.rules.order.OrderBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.OrderRepository;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
-import com.tobeto.entities.concretes.PageResponse;
+import com.tobeto.entities.enums.Status;
 
 @Service
 public class OrderManager implements OrderService {
@@ -32,21 +33,25 @@ public class OrderManager implements OrderService {
 	private ProductService productService;
 
 	@Override
-	public List<Order> getAll() {
-		return orderRepository.findAll();
+	public PageResponse<Order> getAll() {
+		List<Order> orders = orderRepository.findAll();
+		int totalOrderCount = orderRepository.findAll().size();
+		return new PageResponse<Order>(totalOrderCount, orders);
 	}
 
 	@Override
 	public PageResponse<Order> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		List<Order> orders = orderRepository.findAll(pageable).getContent();
-		int totalShelvesCount = orderRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, orders);
+		int totalOrderCount = orderRepository.findAll().size();
+		return new PageResponse<>(totalOrderCount, orders);
 	}
 
 	@Override
-	public List<Order> searchItem(String keyword) {
-		return orderRepository.searchOrder(keyword);
+	public PageResponse<Order> searchItem(String keyword) {
+		List<Order> orders = orderRepository.searchOrder(keyword);
+		int totalOrderCount = orderRepository.searchOrder(keyword).size();
+		return new PageResponse<Order>(totalOrderCount, orders);
 	}
 
 	@Override
@@ -56,12 +61,12 @@ public class OrderManager implements OrderService {
 		orderBusinessRules.isStatusFalse(order);
 
 		order.setInvoiceGenerated(false);
-		order.setOrderStatus(false);
+		order.setStatus(Status.INACTIVE);
 
 		for (OrderDetails orderDetail : order.getOrderDetails()) {
 			UUID productId = orderDetail.getProduct().getId();
 			int count = orderDetail.getQuantity();
-			orderDetail.setStatus(false);
+			orderDetail.setStatus(Status.INACTIVE);
 			productService.acceptProduct(productId, count);
 		}
 	}
