@@ -1,4 +1,4 @@
-package com.tobeto.entities.concretes;
+package com.tobeto.dto;
 
 import java.util.List;
 

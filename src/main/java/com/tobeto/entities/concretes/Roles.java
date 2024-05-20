@@ -1,16 +1,16 @@
 package com.tobeto.entities.concretes;
 
 import java.util.List;
-import java.util.UUID;
+
+import com.tobeto.entities.abstracts.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -18,12 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Roles {
-
-	@Id
-	@GeneratedValue
-	@Column(name = "id")
-	private UUID id;
+@EqualsAndHashCode(callSuper = true)
+public class Roles extends BaseEntity {
 
 	@Column(name = "role")
 	private String role;

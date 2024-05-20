@@ -1,7 +1,6 @@
 package com.tobeto.business.concretes;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +19,14 @@ import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.InvoiceItemRepository;
 import com.tobeto.dataAccess.InvoiceRepository;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Invoice;
 import com.tobeto.entities.concretes.InvoiceItem;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
-import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Product;
+import com.tobeto.entities.enums.Status;
 
 import jakarta.transaction.Transactional;
 
@@ -50,16 +50,11 @@ public class InvoiceManager implements InvoiceService {
 
 	@Override
 	@Transactional
-	public Invoice create(UUID id) {
+	public Invoice create(UUID orderId) {
 
-		Order order = orderService.getOrder(id);
+		Order order = orderService.getOrder(orderId);
 		invoiceBusinessRules.isOrderStatusFalse(order);
 		invoiceBusinessRules.isInvoiceAlreadyExıst(order);
-//		boolean invoiceGenerated = order.isInvoiceGenerated();
-//
-//		if (invoiceGenerated)
-//			throw new BusinessException(Messages.INVOICE_ALREADY_EXIST);
-
 		order.setInvoiceGenerated(true);
 
 		Customer customer = order.getCustomer();
@@ -67,20 +62,20 @@ public class InvoiceManager implements InvoiceService {
 		List<OrderDetails> orderDetails = order.getOrderDetails();
 
 		List<InvoiceItem> invoiceItemsList = new ArrayList<InvoiceItem>();
-
 		LocalDateTime now = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		String formattedDateTime = now.format(formatter);
 
-		Invoice invoice = Invoice.builder().order(order).customer(customer).totalAmount(totalAmount)
-				.waybillDate(formattedDateTime).status(true).build();
+		Invoice invoice = Invoice.builder().order(order).customer(customer).totalAmount(totalAmount).build();
+		invoice.setCreatedDate(now);
+		invoice.setStatus(Status.ACTIVE);
 		Invoice savedInvoice = invoiceRepository.save(invoice);
 
 		for (OrderDetails item : orderDetails) {
 			Product product = productService.getProduct(item.getProduct().getId());
 			InvoiceItem invoiceItem = InvoiceItem.builder().invoice(savedInvoice).product(product)
 					.quantity(item.getQuantity()).unitPrice(item.getUnitPrice()).totalPrice(item.getTotalPrice())
-					.status(true).build();
+					.build();
+			invoiceItem.setCreatedDate(now);
+			invoiceItem.setStatus(Status.ACTIVE);
 			invoiceItemsList.add(invoiceItem);
 		}
 
@@ -89,19 +84,14 @@ public class InvoiceManager implements InvoiceService {
 	}
 
 	@Override
-	public Invoice update(Invoice entity) {
-		return null;
-	}
-
-	@Override
 	@Transactional
-	public void invoiceCancellation(UUID id) {
-		Invoice invoice = getInvoice(id);
+	public void invoiceCancellation(UUID invoiceId) {
+		Invoice invoice = getInvoice(invoiceId);
 		invoiceBusinessRules.isStatusFalse(invoice);
-		invoice.setStatus(false);
+		invoice.setStatus(Status.INACTIVE);
 
 		for (InvoiceItem invoiceItems : invoice.getInvoiceItems()) {
-			invoiceItems.setStatus(false);
+			invoiceItems.setStatus(Status.INACTIVE);
 		}
 		orderService.invoiceCancellation(invoice.getOrder().getId());
 	}
@@ -122,8 +112,10 @@ public class InvoiceManager implements InvoiceService {
 	}
 
 	@Override
-	public List<Invoice> searchItem(String keyword) {
-		return invoiceRepository.searchInvoice(keyword);
+	public PageResponse<Invoice> searchItem(String keyword) {
+		List<Invoice> invoices = invoiceRepository.searchInvoice(keyword);
+		int totalInvoiceCount = invoiceRepository.searchInvoice(keyword).size();
+		return new PageResponse<Invoice>(totalInvoiceCount, invoices);
 	}
 
 	@Override
@@ -137,5 +129,4 @@ public class InvoiceManager implements InvoiceService {
 		}
 		return invoice;
 	}
-
 }
