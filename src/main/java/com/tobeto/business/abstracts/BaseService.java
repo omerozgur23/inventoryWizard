@@ -1,9 +1,8 @@
 package com.tobeto.business.abstracts;
 
-import java.util.List;
 import java.util.UUID;
 
-import com.tobeto.entities.concretes.PageResponse;
+import com.tobeto.dto.PageResponse;
 
 public interface BaseService<T> {
 
@@ -17,5 +16,5 @@ public interface BaseService<T> {
 
 	PageResponse<T> getAllByPage(int pageNo, int pageSize);
 
-	List<T> searchItem(String keyword);
+	PageResponse<T> searchItem(String keyword);
 }

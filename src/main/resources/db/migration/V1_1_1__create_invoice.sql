@@ -3,8 +3,9 @@ CREATE TABLE invoices (
   customer_id BINARY(16) NOT NULL,
   order_id BINARY(16) NOT NULL,
   total_amount DECIMAL NOT NULL,
-  waybill_date DATETIME NOT NULL,
-  status BOOLEAN NOT NULL DEFAULT TRUE,
+  status ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE' NOT NULL,
+  created_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  inactive_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   CONSTRAINT inv_cus_cus_fk
     FOREIGN KEY (customer_id)

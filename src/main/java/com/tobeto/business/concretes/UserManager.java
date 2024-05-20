@@ -1,10 +1,12 @@
 package com.tobeto.business.concretes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +19,10 @@ import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.RolesRepository;
 import com.tobeto.dataAccess.UserRepository;
-import com.tobeto.entities.concretes.PageResponse;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.entities.concretes.Roles;
 import com.tobeto.entities.concretes.User;
+import com.tobeto.entities.enums.Status;
 
 import jakarta.transaction.Transactional;
 
@@ -35,9 +38,6 @@ public class UserManager implements UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-//	@Autowired
-//	private EntityManager entityManager;
-
 	@Autowired
 	private UserBusinessRules userBusinessRules;
 
@@ -46,67 +46,62 @@ public class UserManager implements UserService {
 	public User create(User user) {
 		userBusinessRules.checkIfEmailExist(user.getEmail());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setCreatedDate(LocalDateTime.now());
+		user.setStatus(Status.ACTIVE);
 		return userRepository.save(user);
 	}
 
 	@Override
 	public User update(User clientUser) {
-		User user = userRepository.findById(clientUser.getId()).orElseThrow();
-		clientUser.setPassword(passwordEncoder.encode(clientUser.getPassword()));
-		user.setEmail(clientUser.getEmail());
-		user.setPassword(clientUser.getPassword());
+		User user = getUser(clientUser.getId());
+		if (!"".equals(clientUser.getPassword()))
+			user.setPassword(passwordEncoder.encode(clientUser.getPassword()));
+
+		BeanUtils.copyProperties(clientUser, user, "id", "password", "firstName", "lastName", "createdDate", "status");
 		return userRepository.save(user);
 	}
 
 	@Override
 	public void delete(UUID id) {
-		User user = userRepository.findById(id).orElseThrow();
-		userRepository.delete(user);
+		User userToDelete = userBusinessRules.isAdminOwnAccount(id);
+		userToDelete.setStatus(Status.INACTIVE);
+		userToDelete.setInactiveDate(LocalDateTime.now());
+		userRepository.save(userToDelete);
 	}
 
 	@Override
 	public PageResponse<User> getAll() {
-//		TypedQuery<User> query = entityManager.createNamedQuery("User.findAll", User.class);
-//		return query.getResultList();
-		List<User> users = userRepository.findAll();
-		int totalShelvesCount = userRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, users);
+		List<User> users = userRepository.findAllActive();
+		int totalUserCount = userRepository.findAllActive().size();
+		return new PageResponse<>(totalUserCount, users);
 	}
 
 	@Override
 	public PageResponse<User> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<User> users = userRepository.findAll(pageable).getContent();
-		int totalShelvesCount = userRepository.findAll().size();
-		return new PageResponse<>(totalShelvesCount, users);
+		List<User> users = userRepository.findAllByPagination(pageable).getContent();
+		int totalUserCount = userRepository.findAllActive().size();
+		return new PageResponse<>(totalUserCount, users);
 	}
 
-	public String getUserRoles(User user) {
-		if (user.getRoles().size() > 0) {
-			String s = user.getRoles().stream().map(r -> r.getRole()).collect(Collectors.joining(","));
-			return s;
-		} else {
-			return "Rol not found";
-		}
+	@Override
+	public PageResponse<User> searchItem(String keyword) {
+		List<User> users = userRepository.searchUser(keyword);
+		int totalUserCount = userRepository.searchUser(keyword).size();
+		return new PageResponse<User>(totalUserCount, users);
 	}
 
 	@Override
 	public boolean changePassword(String lastPassword, String newPassword, String email) {
-		Optional<User> users = userRepository.findByEmail(email);
-		if (users.isPresent()) {
-			User user = users.get();
+		Optional<User> user = userBusinessRules.checkIfEmailExist(email);
 
-			if (passwordEncoder.matches(lastPassword, user.getPassword())) {
-				user.setPassword(passwordEncoder.encode(newPassword));
-				userRepository.save(user);
-				return true;
-			} else {
-				throw new BusinessException(Messages.INCORRECT_LAST_PASSWORD);
-			}
+		if (passwordEncoder.matches(lastPassword, user.get().getPassword())) {
+			user.get().setPassword(passwordEncoder.encode(newPassword));
+			userRepository.save(user.get());
+			return true;
 		} else {
-			throw new BusinessException(Messages.USER_ID_NOT_FOUND);
+			throw new BusinessException(Messages.INCORRECT_LAST_PASSWORD);
 		}
-
 	}
 
 	@Override
@@ -122,23 +117,13 @@ public class UserManager implements UserService {
 	}
 
 	@Override
-	@Transactional
-	public Optional<User> getUser(String email) {
-		Optional<User> users = userRepository.findByEmail(email);
-		if (users.isPresent()) {
-			users.get().getRoles();
+	public String getUserRoles(User user) {
+		if (user.getRoles().size() > 0) {
+			String s = user.getRoles().stream().map(r -> r.getRole()).collect(Collectors.joining(","));
+			return s;
+		} else {
+			throw new BusinessException(Messages.ROLE_NOT_FOUND);
 		}
-		return users;
-	}
-
-	@Override
-	public Optional<User> getUserByEmail(String email) {
-		return userRepository.findByEmail(email);
-	}
-
-	@Override
-	public List<User> searchItem(String keyword) {
-		return userRepository.searchUser(keyword);
 	}
 
 	@Override

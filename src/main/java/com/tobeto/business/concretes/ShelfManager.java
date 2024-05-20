@@ -1,8 +1,11 @@
 package com.tobeto.business.concretes;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +16,9 @@ import com.tobeto.business.rules.shelf.ShelfBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.ShelfRepository;
-import com.tobeto.entities.concretes.PageResponse;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.entities.concretes.Shelf;
+import com.tobeto.entities.enums.Status;
 
 @Service
 public class ShelfManager implements ShelfService {
@@ -43,6 +47,8 @@ public class ShelfManager implements ShelfService {
 			}
 			Shelf newShelf = new Shelf();
 			newShelf.setCapacity(shelf.getCapacity());
+			newShelf.setCreatedDate(LocalDateTime.now());
+			newShelf.setStatus(Status.ACTIVE);
 			shelfRepository.save(newShelf);
 			createdShelfCount++;
 		}
@@ -51,21 +57,19 @@ public class ShelfManager implements ShelfService {
 
 	@Override
 	public Shelf update(Shelf clientShelf) {
-		Shelf shelf = shelfRepository.findById(clientShelf.getId()).orElseThrow();
+		Shelf shelf = getShelf(clientShelf.getId());
 		shelfBusinessRules.checkCapacityGreater(clientShelf.getCapacity());
-		shelf.setCapacity(clientShelf.getCapacity());
+		BeanUtils.copyProperties(clientShelf, shelf, "createdDate", "status");
 		return shelfRepository.save(shelf);
-
 	}
 
 	@Override
 	public void delete(UUID id) {
-		Shelf shelf = shelfRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(Messages.SHELF_ID_NOT_FOUND));
-
+		Shelf shelf = getShelf(id);
 		shelfBusinessRules.checkIfShelfEmpty(shelf);
-
-		shelfRepository.deleteById(id);
+		shelf.setStatus(Status.INACTIVE);
+		shelf.setInactiveDate(LocalDateTime.now());
+		shelfRepository.save(shelf);
 	}
 
 	@Override
@@ -84,7 +88,21 @@ public class ShelfManager implements ShelfService {
 	}
 
 	@Override
-	public List<Shelf> searchItem(String keyword) {
-		return shelfRepository.searchShelf(keyword);
+	public PageResponse<Shelf> searchItem(String keyword) {
+		List<Shelf> shelves = shelfRepository.searchShelf(keyword);
+		int totalShelvesCount = shelfRepository.searchShelf(keyword).size();
+		return new PageResponse<Shelf>(totalShelvesCount, shelves);
+	}
+
+	@Override
+	public Shelf getShelf(UUID shelfId) {
+		Optional<Shelf> oShelf = shelfRepository.findById(shelfId);
+		Shelf shelf = null;
+		if (oShelf.isPresent()) {
+			shelf = oShelf.get();
+		} else {
+			throw new BusinessException(Messages.SHELF_ID_NOT_FOUND);
+		}
+		return shelf;
 	}
 }

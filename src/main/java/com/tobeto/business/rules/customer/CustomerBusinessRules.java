@@ -1,7 +1,5 @@
 package com.tobeto.business.rules.customer;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +28,6 @@ public class CustomerBusinessRules {
 	public void checkIfEmailExists(String email) {
 		if (customerRepository.existsByContactEmail(email)) {
 			throw new BusinessException(Messages.EMAIL_ALREADY_EXISTS);
-		}
-	}
-
-	public void checkIfByIdExists(UUID id) {
-		if (!customerRepository.existsById(id)) {
-			throw new BusinessException(Messages.CUSTOMER_ID_NOT_FOUND);
 		}
 	}
 }

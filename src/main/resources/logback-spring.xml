@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%cyan(%d{HH:mm:ss}) %boldYellow(%-5level) %logger{36} %boldYellow(-) %boldWhite(%msg%n)</pattern>
+        </encoder>
+    </appender>
+    
+     <root level="info">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <logger name="com.tobeto.core.utilities.logging.LoggingManager" level="info" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
+</configuration>

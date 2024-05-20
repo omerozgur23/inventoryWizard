@@ -16,16 +16,17 @@ import jakarta.persistence.criteria.Predicate;
 
 public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecificationExecutor<Order> {
 
-	@Query("SELECT o FROM Order o ORDER BY o.orderDate DESC LIMIT 5")
+	@Query("SELECT o FROM Order o WHERE o.status = Status.ACTIVE ORDER BY o.orderDate DESC LIMIT 5")
 	List<Order> getLastFiveOrders();
 
 	@Query("SELECT new com.tobeto.dto.report.GetCustomerByOrderCountResponse(c.id, c.companyName, COUNT(o.customer.id) AS count) "
-			+ "FROM Order o JOIN o.customer c " + "GROUP BY c.id, c.companyName " + "ORDER BY count DESC LIMIT 5")
+			+ "FROM Order o JOIN o.customer c " + "WHERE o.status = Status.ACTIVE " + "GROUP BY c.id, c.companyName "
+			+ "ORDER BY count DESC LIMIT 5")
 	List<GetCustomerByOrderCountResponse> getOrdersTheMost();
 
 	@Query("SELECT new com.tobeto.dto.report.GetEmployeeByOrderCountResponse(e.id, e.firstName, e.lastName, COUNT(o.employee.id) AS count) "
-			+ "FROM Order o JOIN o.employee e " + "GROUP BY e.id, e.firstName, e.lastName "
-			+ "ORDER BY count DESC LIMIT 5")
+			+ "FROM Order o JOIN o.employee e " + "WHERE o.status = Status.ACTIVE "
+			+ "GROUP BY e.id, e.firstName, e.lastName " + "ORDER BY count DESC LIMIT 5")
 	List<GetEmployeeByOrderCountResponse> getMostOrderSenders();
 
 	default List<Order> searchOrder(String keyword) {

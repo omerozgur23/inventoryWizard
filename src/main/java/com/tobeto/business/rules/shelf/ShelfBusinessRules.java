@@ -12,7 +12,6 @@ public class ShelfBusinessRules {
 
 	public void checkIfShelfEmpty(Shelf shelf) {
 		Product product = shelf.getProduct();
-
 		if (product == null || product.getProductName() == null || product.getProductName().isEmpty()) {
 			return;
 		} else {
@@ -21,7 +20,7 @@ public class ShelfBusinessRules {
 	}
 
 	public void checkCapacityGreater(int capacity) {
-		if (capacity > 5) {
+		if (capacity > 10) {
 			throw new BusinessException(Messages.CAPACITY_CANNOT_BE_BIG);
 		}
 	}
