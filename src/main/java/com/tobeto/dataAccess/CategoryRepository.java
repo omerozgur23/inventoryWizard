@@ -4,14 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import com.tobeto.entities.concretes.Category;
+import com.tobeto.entities.enums.Status;
 
 import jakarta.persistence.criteria.Predicate;
 
 public interface CategoryRepository extends JpaRepository<Category, UUID>, JpaSpecificationExecutor<Category> {
+
+	@Query("SELECT c FROM Category c WHERE c.status = Status.ACTIVE")
+	List<Category> findAllActive();
+
+	@Query("SELECT c FROM Category c WHERE c.status = Status.ACTIVE")
+	Page<Category> findAllByPagination(Pageable pageable);
 
 	boolean existsByCategoryName(String name);
 
@@ -20,14 +30,16 @@ public interface CategoryRepository extends JpaRepository<Category, UUID>, JpaSp
 	default List<Category> searchCategories(String keyword) {
 		return findAll((root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
-
+			predicates.add(criteriaBuilder.equal(root.get("status"), Status.ACTIVE));
 			if (keyword != null && !keyword.isEmpty()) {
 				String likeKeyword = "%" + keyword + "%";
-
-				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("categoryName")), likeKeyword));
+				List<Predicate> keywordPredicates = new ArrayList<>();
+				keywordPredicates
+						.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("categoryName")), likeKeyword));
+				predicates.add(criteriaBuilder.or(keywordPredicates.toArray(new Predicate[0])));
 			}
 
-			return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		});
 	}
 }

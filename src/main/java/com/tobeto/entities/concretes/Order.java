@@ -1,12 +1,11 @@
 package com.tobeto.entities.concretes;
 
 import java.util.List;
-import java.util.UUID;
+
+import com.tobeto.entities.abstracts.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -14,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -22,12 +22,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "orders")
-public class Order {
-
-	@Id
-	@GeneratedValue
-	@Column(name = "id")
-	private UUID id;
+@EqualsAndHashCode(callSuper = true)
+public class Order extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
@@ -45,4 +41,10 @@ public class Order {
 
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetails> orderDetails;
+
+	@OneToMany(mappedBy = "order")
+	private List<Invoice> invoice;
+
+	@Column(name = "invoice_generated")
+	private boolean invoiceGenerated = false;
 }

@@ -1,17 +1,16 @@
 package com.tobeto.entities.concretes;
 
-import java.util.UUID;
+import com.tobeto.entities.abstracts.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -20,12 +19,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "order_details")
-public class OrderDetails {
-
-	@Id
-	@GeneratedValue
-	@Column(name = "id")
-	private UUID id;
+@EqualsAndHashCode(callSuper = true)
+public class OrderDetails extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "order_id")
@@ -35,9 +30,15 @@ public class OrderDetails {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
+	@Column(name = "unit_price")
 	private double unitPrice;
 
+	@Column(name = "total_price")
 	private double totalPrice;
 
+	@Column(name = "quantity")
 	private int quantity;
+
+	@Column(name = "invoiced_quantity")
+	private int invoicedQuantity;
 }

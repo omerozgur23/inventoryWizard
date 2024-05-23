@@ -12,7 +12,7 @@ public class GetAllCategoryResponse {
 
 	private UUID id;
 
-	private String name;
+	private String categoryName;
 
 	private List<GetAllProductResponse> products;
 

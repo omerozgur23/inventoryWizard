@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.OrderDetailsService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.dto.orderDetails.GetAllOrderDetailsResponse;
 import com.tobeto.entities.concretes.OrderDetails;
-import com.tobeto.entities.concretes.PageResponse;
 
 @RestController
 @RequestMapping("/api/v1/orderDetails")
@@ -26,26 +26,21 @@ public class OrderDetailsController {
 	private ModelMapperService modelMapper;
 
 	@GetMapping("/getall")
-	public List<GetAllOrderDetailsResponse> getAll() {
-		List<OrderDetails> orderDetails = orderDetailsService.getAll();
-		return orderDetails.stream().map(od -> modelMapper.forResponse().map(od, GetAllOrderDetailsResponse.class))
-				.toList();
-	}
-
-	@GetMapping("/getallByPage")
-	public PageResponse<GetAllOrderDetailsResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "15") int pageSize) {
-		PageResponse<OrderDetails> shelfPage = orderDetailsService.getAllByPage(pageNo, pageSize);
-		List<GetAllOrderDetailsResponse> responseList = shelfPage.getData().stream()
-				.map(shelf -> modelMapper.forResponse().map(shelf, GetAllOrderDetailsResponse.class)).toList();
-		return new PageResponse<>(shelfPage.getCount(), responseList);
+	public PageResponse<GetAllOrderDetailsResponse> getAll() {
+		PageResponse<OrderDetails> orderDetailsPage = orderDetailsService.getAll();
+		List<GetAllOrderDetailsResponse> responseList = orderDetailsPage.getData().stream()
+				.map(od -> modelMapper.forResponse().map(od, GetAllOrderDetailsResponse.class)).toList();
+		return new PageResponse<GetAllOrderDetailsResponse>(orderDetailsPage.getCount(), responseList);
 	}
 
 	@GetMapping("/getByOrderId")
-	public List<GetAllOrderDetailsResponse> getByOrderId(@RequestParam UUID orderId) {
-		List<OrderDetails> orderDetails = orderDetailsService.getByOrderId(orderId);
-		return orderDetails.stream().map(od -> modelMapper.forResponse().map(od, GetAllOrderDetailsResponse.class))
+	public PageResponse<GetAllOrderDetailsResponse> getByOrderId(@RequestParam UUID orderId,
+			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize) {
+		PageResponse<OrderDetails> orderDetailPage = orderDetailsService.getByOrderId(orderId, pageNo, pageSize);
+		List<GetAllOrderDetailsResponse> responseList = orderDetailPage.getData().stream()
+				.map(orderDetail -> modelMapper.forResponse().map(orderDetail, GetAllOrderDetailsResponse.class))
 				.toList();
+		return new PageResponse<>(orderDetailPage.getCount(), responseList);
 	}
 
 }
