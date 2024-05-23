@@ -19,7 +19,9 @@ import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
 import com.tobeto.dataAccess.InvoiceItemRepository;
 import com.tobeto.dataAccess.InvoiceRepository;
+import com.tobeto.dataAccess.OrderDetailsRepository;
 import com.tobeto.dto.PageResponse;
+import com.tobeto.dto.product.ProductItemDTO;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Invoice;
 import com.tobeto.entities.concretes.InvoiceItem;
@@ -40,6 +42,9 @@ public class InvoiceManager implements InvoiceService {
 	private InvoiceItemRepository invoiceItemRepository;
 
 	@Autowired
+	private OrderDetailsRepository orderDetailsRepository;
+
+	@Autowired
 	private ProductService productService;
 
 	@Autowired
@@ -50,37 +55,53 @@ public class InvoiceManager implements InvoiceService {
 
 	@Override
 	@Transactional
-	public Invoice create(UUID orderId) {
+	public Invoice create(UUID orderId, List<ProductItemDTO> productList) {
 
 		Order order = orderService.getOrder(orderId);
 		invoiceBusinessRules.isOrderStatusFalse(order);
 		invoiceBusinessRules.isInvoiceAlreadyExıst(order);
-		order.setInvoiceGenerated(true);
 
 		Customer customer = order.getCustomer();
-		double totalAmount = order.getOrderPrice();
+		double totalAmount = 0.0;
 		List<OrderDetails> orderDetails = order.getOrderDetails();
 
 		List<InvoiceItem> invoiceItemsList = new ArrayList<InvoiceItem>();
 		LocalDateTime now = LocalDateTime.now();
 
-		Invoice invoice = Invoice.builder().order(order).customer(customer).totalAmount(totalAmount).build();
+		Invoice invoice = Invoice.builder().order(order).customer(customer).build();
 		invoice.setCreatedDate(now);
 		invoice.setStatus(Status.ACTIVE);
-		Invoice savedInvoice = invoiceRepository.save(invoice);
 
-		for (OrderDetails item : orderDetails) {
-			Product product = productService.getProduct(item.getProduct().getId());
-			InvoiceItem invoiceItem = InvoiceItem.builder().invoice(savedInvoice).product(product)
-					.quantity(item.getQuantity()).unitPrice(item.getUnitPrice()).totalPrice(item.getTotalPrice())
-					.build();
+		for (ProductItemDTO requestProduct : productList) {
+			Product invoiceProduct = productService.getProduct(requestProduct.getProductId());
+			double productTotalPrice = invoiceProduct.getUnitPrice() * requestProduct.getCount();
+
+			totalAmount += productTotalPrice;
+			invoice.setTotalAmount(totalAmount);
+
+			InvoiceItem invoiceItem = InvoiceItem.builder().invoice(invoice).product(invoiceProduct)
+					.quantity(requestProduct.getCount()).unitPrice(invoiceProduct.getUnitPrice())
+					.totalPrice(invoiceProduct.getUnitPrice() * requestProduct.getCount()).build();
 			invoiceItem.setCreatedDate(now);
 			invoiceItem.setStatus(Status.ACTIVE);
 			invoiceItemsList.add(invoiceItem);
-		}
 
+			for (OrderDetails orderDetail : orderDetails) {
+				if (orderDetail.getProduct().getId().equals(requestProduct.getProductId())) {
+					int newInvoicedQuantity = orderDetail.getInvoicedQuantity() + requestProduct.getCount();
+					if (newInvoicedQuantity > orderDetail.getQuantity()) {
+						throw new BusinessException("Hata");
+					}
+					orderDetail.setInvoicedQuantity(newInvoicedQuantity);
+				}
+			}
+
+		}
+		invoiceRepository.save(invoice);
+		invoiceBusinessRules.isInvoicedQuantityFull(orderDetails);
+		orderDetailsRepository.saveAll(orderDetails);
 		invoiceItemRepository.saveAll(invoiceItemsList);
-		return savedInvoice;
+		return invoice;
 	}
 
 	@Override
@@ -90,10 +111,42 @@ public class InvoiceManager implements InvoiceService {
 		invoiceBusinessRules.isStatusFalse(invoice);
 		invoice.setStatus(Status.INACTIVE);
 
-		for (InvoiceItem invoiceItems : invoice.getInvoiceItems()) {
-			invoiceItems.setStatus(Status.INACTIVE);
+		for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+			invoiceItem.setStatus(Status.INACTIVE);
+
+			OrderDetails orderDetail = orderDetailsRepository.findByOrderIdAndProductId(invoice.getOrder().getId(),
+					invoiceItem.getProduct().getId());
+			if (orderDetail != null) {
+				int newInvoicedQuantity = orderDetail.getInvoicedQuantity() - invoiceItem.getQuantity();
+				orderDetail.setInvoicedQuantity(newInvoicedQuantity);
+
+				if (newInvoicedQuantity <= 0) {
+					orderDetail.setStatus(Status.INACTIVE);
+					productService.acceptProduct(orderDetail.getProduct().getId(), orderDetail.getQuantity());
+				}
+			}
 		}
+
+		boolean allInvoicedQuantitiesZero = invoice.getOrder().getOrderDetails().stream()
+				.allMatch(od -> od.getInvoicedQuantity() == 0);
+
+		if (allInvoicedQuantitiesZero) {
+			invoice.getOrder().setStatus(Status.INACTIVE);
+		}
+
+		invoiceRepository.save(invoice);
+		invoiceItemRepository.saveAll(invoice.getInvoiceItems());
+		orderDetailsRepository.saveAll(invoice.getOrder().getOrderDetails());
 		orderService.invoiceCancellation(invoice.getOrder().getId());
+
+//		Invoice invoice = getInvoice(invoiceId);
+//		invoiceBusinessRules.isStatusFalse(invoice);
+//		invoice.setStatus(Status.INACTIVE);
+//
+//		for (InvoiceItem invoiceItems : invoice.getInvoiceItems()) {
+//			invoiceItems.setStatus(Status.INACTIVE);
+//		}
+//		orderService.invoiceCancellation(invoice.getOrder().getId());
 	}
 
 	@Override

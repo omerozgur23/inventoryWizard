@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public class Invoice extends BaseEntity {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "order_id")
 	private Order order;
 

@@ -57,18 +57,47 @@ public class OrderManager implements OrderService {
 	@Override
 	public void invoiceCancellation(UUID orderId) {
 		Order order = getOrder(orderId);
-
-		orderBusinessRules.isStatusFalse(order);
-
-		order.setInvoiceGenerated(false);
-		order.setStatus(Status.INACTIVE);
+		orderBusinessRules.isStatusInactive(order);
 
 		for (OrderDetails orderDetail : order.getOrderDetails()) {
-			UUID productId = orderDetail.getProduct().getId();
-			int count = orderDetail.getQuantity();
-			orderDetail.setStatus(Status.INACTIVE);
-			productService.acceptProduct(productId, count);
+//			UUID productId = orderDetail.getProduct().getId();
+//			int count = orderDetail.getQuantity();
+
+//			productService.acceptProduct(productId, count);
+
+			if (orderDetail.getInvoicedQuantity() == 0) {
+				orderDetail.setStatus(Status.INACTIVE);
+			}
 		}
+
+//		boolean allInvoicedQuantitiesZero = order.getOrderDetails().stream()
+//				.allMatch(od -> od.getInvoicedQuantity() == 0);
+//
+//		if (allInvoicedQuantitiesZero) {
+//			order.setStatus(Status.INACTIVE);
+//			order.setInvoiceGenerated(false);
+//		}
+		boolean allInvoicesInactive = order.getInvoice().stream().allMatch(inv -> inv.getStatus() == Status.INACTIVE);
+
+		if (allInvoicesInactive) {
+			order.setStatus(Status.INACTIVE);
+			order.setInvoiceGenerated(false);
+		}
+
+		orderRepository.save(order);
+//		Order order = getOrder(orderId);
+//
+//		orderBusinessRules.isStatusFalse(order);
+//
+//		order.setInvoiceGenerated(false);
+//		order.setStatus(Status.INACTIVE);
+//
+//		for (OrderDetails orderDetail : order.getOrderDetails()) {
+//			UUID productId = orderDetail.getProduct().getId();
+//			int count = orderDetail.getQuantity();
+//			orderDetail.setStatus(Status.INACTIVE);
+//			productService.acceptProduct(productId, count);
+//		}
 	}
 
 	@Override
