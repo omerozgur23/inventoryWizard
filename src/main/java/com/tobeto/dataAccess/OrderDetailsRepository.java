@@ -27,4 +27,6 @@ public interface OrderDetailsRepository extends JpaRepository<OrderDetails, UUID
 
 	@Query("SELECT SUM(od.quantity * p.purchasePrice) AS totalSalesCost FROM OrderDetails od JOIN od.product p WHERE od.status = Status.ACTIVE")
 	double getTotalSalesCost();
+
+	OrderDetails findByOrderIdAndProductId(UUID orderId, UUID productId);
 }
