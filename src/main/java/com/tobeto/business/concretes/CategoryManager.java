@@ -56,16 +56,16 @@ public class CategoryManager implements CategoryService {
 
 	@Override
 	public PageResponse<Category> getAll() {
-		List<Category> categories = categoryRepository.findAll();
-		int totalCategoriesCount = categoryRepository.findAll().size();
+		List<Category> categories = categoryRepository.findAllActive();
+		int totalCategoriesCount = categoryRepository.findAllActive().size();
 		return new PageResponse<>(totalCategoriesCount, categories);
 	}
 
 	@Override
 	public PageResponse<Category> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<Category> categoryPage = categoryRepository.findAll(pageable).getContent();
-		int totalCategoryCount = categoryRepository.findAll().size();
+		List<Category> categoryPage = categoryRepository.findAllByPagination(pageable).getContent();
+		int totalCategoryCount = categoryRepository.findAllActive().size();
 		return new PageResponse<>(totalCategoryCount, categoryPage);
 	}
 

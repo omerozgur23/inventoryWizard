@@ -26,7 +26,6 @@ public class CreateUserRequest {
 	private String email;
 
 	@Size(min = 6, max = 16, message = Messages.PASSWORD_MUST_BE_6_CHARACTERS)
-//	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Password must contain at least one letter and one digit")
 	private String password;
 
 	@NotNull(message = Messages.ROLES_LIST_CANNOT_BE_NULL)

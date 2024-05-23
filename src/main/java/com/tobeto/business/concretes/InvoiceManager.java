@@ -58,7 +58,7 @@ public class InvoiceManager implements InvoiceService {
 	public Invoice create(UUID orderId, List<ProductItemDTO> productList) {
 
 		Order order = orderService.getOrder(orderId);
-		invoiceBusinessRules.isOrderStatusFalse(order);
+		invoiceBusinessRules.isOrderStatusInactive(order);
 		invoiceBusinessRules.isInvoiceAlreadyExıst(order);
 
 		Customer customer = order.getCustomer();
@@ -108,11 +108,13 @@ public class InvoiceManager implements InvoiceService {
 	@Transactional
 	public void invoiceCancellation(UUID invoiceId) {
 		Invoice invoice = getInvoice(invoiceId);
-		invoiceBusinessRules.isStatusFalse(invoice);
+		invoiceBusinessRules.isStatusInactive(invoice);
 		invoice.setStatus(Status.INACTIVE);
+		invoice.setInactiveDate(LocalDateTime.now());
 
 		for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
 			invoiceItem.setStatus(Status.INACTIVE);
+			invoiceItem.setInactiveDate(LocalDateTime.now());
 
 			OrderDetails orderDetail = orderDetailsRepository.findByOrderIdAndProductId(invoice.getOrder().getId(),
 					invoiceItem.getProduct().getId());
@@ -127,26 +129,10 @@ public class InvoiceManager implements InvoiceService {
 			}
 		}
 
-		boolean allInvoicedQuantitiesZero = invoice.getOrder().getOrderDetails().stream()
-				.allMatch(od -> od.getInvoicedQuantity() == 0);
-
-		if (allInvoicedQuantitiesZero) {
-			invoice.getOrder().setStatus(Status.INACTIVE);
-		}
-
 		invoiceRepository.save(invoice);
 		invoiceItemRepository.saveAll(invoice.getInvoiceItems());
 		orderDetailsRepository.saveAll(invoice.getOrder().getOrderDetails());
 		orderService.invoiceCancellation(invoice.getOrder().getId());
-
-//		Invoice invoice = getInvoice(invoiceId);
-//		invoiceBusinessRules.isStatusFalse(invoice);
-//		invoice.setStatus(Status.INACTIVE);
-//
-//		for (InvoiceItem invoiceItems : invoice.getInvoiceItems()) {
-//			invoiceItems.setStatus(Status.INACTIVE);
-//		}
-//		orderService.invoiceCancellation(invoice.getOrder().getId());
 	}
 
 	@Override

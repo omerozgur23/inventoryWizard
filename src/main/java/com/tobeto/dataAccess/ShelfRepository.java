@@ -18,7 +18,7 @@ import jakarta.persistence.criteria.Predicate;
 public interface ShelfRepository extends JpaRepository<Shelf, UUID>, JpaSpecificationExecutor<Shelf> {
 
 	@Query("SELECT s FROM Shelf s WHERE s.status = Status.ACTIVE")
-	List<Shelf> findAll();
+	List<Shelf> findAllActive();
 
 	@Query("SELECT s FROM Shelf s WHERE s.status = Status.ACTIVE ORDER BY s.product DESC")
 	List<Shelf> findAllOrderByProductIdNotNull(Pageable pageable);

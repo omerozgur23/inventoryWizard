@@ -17,12 +17,6 @@ public class LoggingManager implements LoggingService {
 				createdDate);
 	}
 
-//	@Override
-//	public void logUpdate(UUID entityId, String entityName, String updatedBy, LocalDateTime updatedDate,
-//			String updateDetails) {
-//		log.info("Update operation for {} ID: {}, Updated by: {}, Updated date: {}, Update details: {}", entityName,
-//				entityId, updatedBy, updatedDate, updateDetails);
-//	}
 	@Override
 	public void logUpdate(UUID entityId, String entityName, String updatedBy, LocalDateTime updatedDate,
 			String updateDetails, boolean success) {
