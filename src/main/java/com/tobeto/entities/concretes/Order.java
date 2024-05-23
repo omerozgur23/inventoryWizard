@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,8 +42,8 @@ public class Order extends BaseEntity {
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetails> orderDetails;
 
-	@OneToOne(mappedBy = "order")
-	private Invoice invoice;
+	@OneToMany(mappedBy = "order")
+	private List<Invoice> invoice;
 
 	@Column(name = "invoice_generated")
 	private boolean invoiceGenerated = false;
