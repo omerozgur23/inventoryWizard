@@ -7,7 +7,6 @@ public interface LoggingService {
 
 	void logCreate(UUID entityId, String entityName, String createdBy, LocalDateTime createdDate);
 
-//	void logUpdate(UUID entityId, String entityName, String updatedBy, LocalDateTime updatedDate, String updateDetails);
 	void logUpdate(UUID entityId, String entityName, String updatedBy, LocalDateTime updatedDate, String updateDetails,
 			boolean success);
 

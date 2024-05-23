@@ -74,8 +74,8 @@ public class ShelfManager implements ShelfService {
 
 	@Override
 	public PageResponse<Shelf> getAll() {
-		List<Shelf> shelves = shelfRepository.findAll();
-		int totalShelvesCount = shelfRepository.findAll().size();
+		List<Shelf> shelves = shelfRepository.findAllActive();
+		int totalShelvesCount = shelfRepository.findAllActive().size();
 		return new PageResponse<>(totalShelvesCount, shelves);
 	}
 
@@ -83,7 +83,7 @@ public class ShelfManager implements ShelfService {
 	public PageResponse<Shelf> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		List<Shelf> shelves = shelfRepository.findAllOrderByProductIdNotNull(pageable);
-		int totalShelvesCount = shelfRepository.findAll().size();
+		int totalShelvesCount = shelfRepository.findAllActive().size();
 		return new PageResponse<>(totalShelvesCount, shelves);
 	}
 
