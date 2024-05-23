@@ -14,8 +14,10 @@ import com.tobeto.business.abstracts.OrderService;
 import com.tobeto.business.rules.order.OrderBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
+import com.tobeto.dataAccess.CustomerRepository;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.dto.PageResponse;
+import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
 import com.tobeto.entities.enums.Status;
@@ -25,6 +27,9 @@ public class OrderManager implements OrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+
+	@Autowired
+	private CustomerRepository customerRepository;
 
 	@Autowired
 	private OrderBusinessRules orderBusinessRules;
@@ -42,6 +47,13 @@ public class OrderManager implements OrderService {
 		List<Order> orders = orderRepository.findAll(pageable).getContent();
 		int totalOrderCount = orderRepository.findAll().size();
 		return new PageResponse<>(totalOrderCount, orders);
+	}
+
+	@Override
+	public Customer findById(UUID orderId) {
+		Order order = getOrder(orderId);
+		Customer customer = customerRepository.findById(order.getCustomer().getId()).orElseThrow();
+		return customer;
 	}
 
 	@Override
