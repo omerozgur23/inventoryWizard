@@ -87,6 +87,7 @@ public record Messages() {
 	public static final String INVOICE_STATUS_ALREADY_FALSE = "Invoice status already false";
 	public static final String ORDER_ID_CANNOR_BE_NULL = "Order ID cannot be null";
 	public static final String INVOICE_ID_CANNOR_BE_NULL = "Invoice ID cannot be null";
+	public static final String NUMBER_OF_PRODUCTS_IS_EXCESSIVE = "You entered more than the number of products in the order!";
 
 	// Role Messages
 	public static final String ROLE_NOT_FOUND = "Role not found";

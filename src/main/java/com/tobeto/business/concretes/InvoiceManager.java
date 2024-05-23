@@ -90,7 +90,7 @@ public class InvoiceManager implements InvoiceService {
 				if (orderDetail.getProduct().getId().equals(requestProduct.getProductId())) {
 					int newInvoicedQuantity = orderDetail.getInvoicedQuantity() + requestProduct.getCount();
 					if (newInvoicedQuantity > orderDetail.getQuantity()) {
-						throw new BusinessException("Hata");
+						throw new BusinessException(Messages.NUMBER_OF_PRODUCTS_IS_EXCESSIVE);
 					}
 					orderDetail.setInvoicedQuantity(newInvoicedQuantity);
 				}

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
+import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 
 public interface OrderService extends BaseService<Order> {
@@ -23,4 +24,6 @@ public interface OrderService extends BaseService<Order> {
 	Order getOrder(UUID orderId);
 
 	void invoiceCancellation(UUID orderId);
+
+	Customer findById(UUID orderId);
 }

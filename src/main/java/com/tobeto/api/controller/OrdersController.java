@@ -14,7 +14,10 @@ import com.tobeto.core.utilities.config.mappers.ModelMapperService;
 import com.tobeto.dto.PageResponse;
 import com.tobeto.dto.PaginationRequest;
 import com.tobeto.dto.SearchRequest;
+import com.tobeto.dto.customer.GetAllCustomerResponse;
 import com.tobeto.dto.order.GetAllOrderResponse;
+import com.tobeto.dto.order.GetOrderByIdRequest;
+import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 
 import jakarta.validation.Valid;
@@ -51,5 +54,12 @@ public class OrdersController {
 		List<GetAllOrderResponse> responseList = orderPage.getData().stream()
 				.map(order -> modelMapper.forResponse().map(order, GetAllOrderResponse.class)).toList();
 		return new PageResponse<GetAllOrderResponse>(orderPage.getCount(), responseList);
+	}
+
+	@PostMapping("getbyid")
+	public GetAllCustomerResponse findById(@RequestBody GetOrderByIdRequest request) {
+		Customer customer = orderService.findById(request.getId());
+		GetAllCustomerResponse response = modelMapper.forResponse().map(customer, GetAllCustomerResponse.class);
+		return response;
 	}
 }
