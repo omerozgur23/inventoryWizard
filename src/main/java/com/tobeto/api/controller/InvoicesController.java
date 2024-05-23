@@ -34,7 +34,7 @@ public class InvoicesController {
 
 	@PostMapping("/create")
 	public SuccessResponse create(@Valid @RequestBody CreateInvoiceRequest request) {
-		invoiceService.create(request.getOrderId());
+		invoiceService.create(request.getOrderId(), request.getProductItems());
 		return new SuccessResponse();
 	}
 

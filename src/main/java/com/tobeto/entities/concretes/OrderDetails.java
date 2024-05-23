@@ -38,4 +38,7 @@ public class OrderDetails extends BaseEntity {
 
 	@Column(name = "quantity")
 	private int quantity;
+
+	@Column(name = "invoiced_quantity")
+	private int invoicedQuantity;
 }
