@@ -1,5 +1,6 @@
 package com.tobeto.business.concretes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.business.abstracts.OrderService;
-import com.tobeto.business.abstracts.ProductService;
 import com.tobeto.business.rules.order.OrderBusinessRules;
 import com.tobeto.core.utilities.exceptions.BusinessException;
 import com.tobeto.core.utilities.exceptions.Messages;
@@ -28,9 +28,6 @@ public class OrderManager implements OrderService {
 
 	@Autowired
 	private OrderBusinessRules orderBusinessRules;
-
-	@Autowired
-	private ProductService productService;
 
 	@Override
 	public PageResponse<Order> getAll() {
@@ -58,46 +55,22 @@ public class OrderManager implements OrderService {
 	public void invoiceCancellation(UUID orderId) {
 		Order order = getOrder(orderId);
 		orderBusinessRules.isStatusInactive(order);
+		order.setInvoiceGenerated(false);
 
 		for (OrderDetails orderDetail : order.getOrderDetails()) {
-//			UUID productId = orderDetail.getProduct().getId();
-//			int count = orderDetail.getQuantity();
-
-//			productService.acceptProduct(productId, count);
-
 			if (orderDetail.getInvoicedQuantity() == 0) {
 				orderDetail.setStatus(Status.INACTIVE);
+				orderDetail.setInactiveDate(LocalDateTime.now());
 			}
 		}
 
-//		boolean allInvoicedQuantitiesZero = order.getOrderDetails().stream()
-//				.allMatch(od -> od.getInvoicedQuantity() == 0);
-//
-//		if (allInvoicedQuantitiesZero) {
-//			order.setStatus(Status.INACTIVE);
-//			order.setInvoiceGenerated(false);
-//		}
 		boolean allInvoicesInactive = order.getInvoice().stream().allMatch(inv -> inv.getStatus() == Status.INACTIVE);
 
 		if (allInvoicesInactive) {
 			order.setStatus(Status.INACTIVE);
-			order.setInvoiceGenerated(false);
+			order.setInactiveDate(LocalDateTime.now());
 		}
-
 		orderRepository.save(order);
-//		Order order = getOrder(orderId);
-//
-//		orderBusinessRules.isStatusFalse(order);
-//
-//		order.setInvoiceGenerated(false);
-//		order.setStatus(Status.INACTIVE);
-//
-//		for (OrderDetails orderDetail : order.getOrderDetails()) {
-//			UUID productId = orderDetail.getProduct().getId();
-//			int count = orderDetail.getQuantity();
-//			orderDetail.setStatus(Status.INACTIVE);
-//			productService.acceptProduct(productId, count);
-//		}
 	}
 
 	@Override

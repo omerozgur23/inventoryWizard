@@ -26,13 +26,13 @@ public class InvoiceBusinessRules {
 	@Autowired
 	private OrderRepository orderRepository;
 
-	public void isStatusFalse(Invoice invoice) {
+	public void isStatusInactive(Invoice invoice) {
 		if (invoice.getStatus() == Status.INACTIVE) {
 			throw new BusinessException(Messages.INVOICE_STATUS_ALREADY_FALSE);
 		}
 	}
 
-	public void isOrderStatusFalse(Order order) {
+	public void isOrderStatusInactive(Order order) {
 		if (order.getStatus() == Status.INACTIVE) {
 			throw new BusinessException(Messages.AN_INVOICE_CANNOT_BE_CRATED_FOR_CANCELED_ORDER);
 		}

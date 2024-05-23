@@ -57,16 +57,16 @@ public class CustomerManager implements CustomerService {
 
 	@Override
 	public PageResponse<Customer> getAll() {
-		List<Customer> customers = customerRepository.findAll();
-		int totalCustomerCount = customerRepository.findAll().size();
+		List<Customer> customers = customerRepository.findAllActive();
+		int totalCustomerCount = customerRepository.findAllActive().size();
 		return new PageResponse<>(totalCustomerCount, customers);
 	}
 
 	@Override
 	public PageResponse<Customer> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<Customer> customers = customerRepository.findAll(pageable).getContent();
-		int totalCustomerCount = customerRepository.findAll().size();
+		List<Customer> customers = customerRepository.findAllByPagination(pageable).getContent();
+		int totalCustomerCount = customerRepository.findAllActive().size();
 		return new PageResponse<>(totalCustomerCount, customers);
 	}
 

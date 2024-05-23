@@ -30,7 +30,6 @@ public class InvoiceDetailManager implements InvoiceDetailService {
 	public PageResponse<InvoiceItem> getByInvoiceId(UUID invoiceId, int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		List<InvoiceItem> invoiceItemPage = invoiceItemRepository.findByInvoiceId(invoiceId, pageable);
-//		List<InvoiceItem> invoiceDetails = invoiceItemPage.getContent();
 		int totalInvoiceDetailCount = invoiceItemRepository.findAll().size();
 		return new PageResponse<InvoiceItem>(totalInvoiceDetailCount, invoiceItemPage);
 	}

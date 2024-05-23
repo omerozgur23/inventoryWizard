@@ -49,16 +49,16 @@ public class SupplierManager implements SupplierService {
 
 	@Override
 	public PageResponse<Supplier> getAll() {
-		List<Supplier> suppliers = supplierRepository.findAll();
-		int totalSupplierCount = supplierRepository.findAll().size();
+		List<Supplier> suppliers = supplierRepository.findAllActive();
+		int totalSupplierCount = supplierRepository.findAllActive().size();
 		return new PageResponse<>(totalSupplierCount, suppliers);
 	}
 
 	@Override
 	public PageResponse<Supplier> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<Supplier> suppliers = supplierRepository.findAll(pageable).getContent();
-		int totalSupplierCount = supplierRepository.findAll().size();
+		List<Supplier> suppliers = supplierRepository.findAllByPagination(pageable).getContent();
+		int totalSupplierCount = supplierRepository.findAllActive().size();
 		return new PageResponse<>(totalSupplierCount, suppliers);
 	}
 
