@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.business.abstracts.InvoiceDetailService;
 import com.tobeto.core.utilities.config.mappers.ModelMapperService;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.dto.invoiceDetail.GetAllInvoiceDetailsResponse;
 import com.tobeto.entities.concretes.InvoiceItem;
-import com.tobeto.entities.concretes.PageResponse;
 
 @RestController
 @RequestMapping("api/v1/invoiceDetail")
@@ -34,17 +34,6 @@ public class InvoiceDetailsContrroller {
 		return new PageResponse<>(invoiceDetailPage.getCount(), responseList);
 	}
 
-	@GetMapping("/getallByPage")
-	public PageResponse<GetAllInvoiceDetailsResponse> getAllProductsByPage(@RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "15") int pageSize) {
-		PageResponse<InvoiceItem> invoiceDetailPage = invoiceDetailService.getAllByPage(pageNo, pageSize);
-		List<GetAllInvoiceDetailsResponse> responseList = invoiceDetailPage.getData().stream()
-				.map(invoiceDetail -> modelMapper.forResponse().map(invoiceDetail, GetAllInvoiceDetailsResponse.class))
-				.toList();
-
-		return new PageResponse<>(invoiceDetailPage.getCount(), responseList);
-	}
-
 	@GetMapping("/getByInvoiceId")
 	public PageResponse<GetAllInvoiceDetailsResponse> getByInvoiceId(@RequestParam UUID invoiceId,
 			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "15") int pageSize) {
@@ -54,14 +43,4 @@ public class InvoiceDetailsContrroller {
 				.toList();
 		return new PageResponse<>(invoiceDetailPage.getCount(), responseList);
 	}
-
-//	@GetMapping("/getByInvoiceId")
-//	public PageResponse<GetAllInvoiceDetailsResponse> getByInvoiceId(@RequestParam UUID invoiceId) {
-//		PageResponse<InvoiceItem> invoiceDetailPage = invoiceDetailService.getByInvoiceId(invoiceId);
-//		List<GetAllInvoiceDetailsResponse> responseList = invoiceDetailPage.getData().stream()
-//				.map(invoiceDetail -> modelMapper.forResponse().map(invoiceDetail, GetAllInvoiceDetailsResponse.class))
-//				.toList();
-//		return new PageResponse<>(invoiceDetailPage.getCount(), responseList);
-//	}
-
 }

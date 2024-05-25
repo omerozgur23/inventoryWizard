@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +23,14 @@ import com.tobeto.dataAccess.OrderDetailsRepository;
 import com.tobeto.dataAccess.OrderRepository;
 import com.tobeto.dataAccess.ProductRepository;
 import com.tobeto.dataAccess.ShelfRepository;
+import com.tobeto.dto.PageResponse;
 import com.tobeto.dto.product.ProductItemDTO;
 import com.tobeto.entities.concretes.Customer;
 import com.tobeto.entities.concretes.Order;
 import com.tobeto.entities.concretes.OrderDetails;
-import com.tobeto.entities.concretes.PageResponse;
 import com.tobeto.entities.concretes.Product;
 import com.tobeto.entities.concretes.User;
+import com.tobeto.entities.enums.Status;
 
 import jakarta.transaction.Transactional;
 
@@ -58,42 +60,46 @@ public class ProductManager implements ProductService {
 
 	@Override
 	public Product create(Product product) {
+		product.setCreatedDate(LocalDateTime.now());
+		product.setStatus(Status.ACTIVE);
 		return productRepository.save(product);
 	}
 
 	@Override
 	public Product update(Product clientProduct) {
 		Product product = getProduct(clientProduct.getId());
-
-		product.setProductName(clientProduct.getProductName());
-		product.setCriticalCount(clientProduct.getCriticalCount());
-		product.setCategory(clientProduct.getCategory());
-		product.setSupplier(clientProduct.getSupplier());
-		product.setPurchasePrice(clientProduct.getPurchasePrice());
-		product.setUnitPrice(clientProduct.getUnitPrice());
-
+		BeanUtils.copyProperties(clientProduct, product, "quantity", "createdDate", "status");
 		return productRepository.save(product);
 	}
 
 	@Override
 	public void delete(UUID id) {
 		Product product = getProduct(id);
-		productRepository.delete(product);
+		product.setStatus(Status.INACTIVE);
+		product.setInactiveDate(LocalDateTime.now());
+		productRepository.save(product);
 	}
 
 	@Override
 	public PageResponse<Product> getAll() {
-		List<Product> products = productRepository.findAll();
-		int totalProductsCount = productRepository.findAll().size();
+		List<Product> products = productRepository.findAllActive();
+		int totalProductsCount = productRepository.findAllActive().size();
 		return new PageResponse<>(totalProductsCount, products);
 	}
 
 	@Override
 	public PageResponse<Product> getAllByPage(int pageNo, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-		List<Product> products = productRepository.findAll(pageable).getContent();
-		int totalProductsCount = productRepository.findAll().size();
+		List<Product> products = productRepository.findAllByPagination(pageable).getContent();
+		int totalProductsCount = productRepository.findAllActive().size();
 		return new PageResponse<>(totalProductsCount, products);
+	}
+
+	@Override
+	public PageResponse<Product> searchItem(String keyword) {
+		List<Product> products = productRepository.searchProducts(keyword);
+		int totalProductsCount = productRepository.searchProducts(keyword).size();
+		return new PageResponse<Product>(totalProductsCount, products);
 	}
 
 	@Transactional
@@ -130,8 +136,9 @@ public class ProductManager implements ProductService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		String formattedDateTime = now.format(formatter);
 
-		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).orderStatus(true)
-				.build();
+		Order order = Order.builder().customer(customer).employee(user).orderDate(formattedDateTime).build();
+		order.setCreatedDate(now);
+		order.setStatus(Status.ACTIVE);
 
 		// Yarı dolu raftan satış
 		for (ProductItemDTO productItem : productItems) {
@@ -153,7 +160,9 @@ public class ProductManager implements ProductService {
 			}
 			OrderDetails orderDetail = OrderDetails.builder().order(order).product(product)
 					.quantity(productItem.getCount()).unitPrice(product.getUnitPrice())
-					.totalPrice(productItem.getCount() * product.getUnitPrice()).status(true).build();
+					.totalPrice(productItem.getCount() * product.getUnitPrice()).build();
+			orderDetail.setCreatedDate(now);
+			orderDetail.setStatus(Status.ACTIVE);
 			orderDetailsList.add(orderDetail);
 
 			productBusinessRules.setProductQuantity(productItem.getProductId(), product);
@@ -162,7 +171,6 @@ public class ProductManager implements ProductService {
 		order.setOrderPrice(totalPriceSum);
 		orderRepository.save(order);
 		orderDetailsRepository.saveAll(orderDetailsList);
-
 	}
 
 	@Override
@@ -175,10 +183,5 @@ public class ProductManager implements ProductService {
 			throw new BusinessException(Messages.PRODUCT_ID_NOT_FOUND);
 		}
 		return product;
-	}
-
-	@Override
-	public List<Product> searchItem(String keyword) {
-		return productRepository.searchProducts(keyword);
 	}
 }

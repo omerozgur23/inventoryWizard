@@ -23,9 +23,7 @@ public class ProductBusinessRules {
 	private ProductRepository productRepository;
 
 	public void fillEmptyShelves(int count, Product product) {
-
 		List<Shelf> emptyShelves = shelfRepository.findAllByCountAndProductId(0, null);
-
 		for (Shelf shelf : emptyShelves) {
 			if (count <= 0) {
 				break;
@@ -37,7 +35,6 @@ public class ProductBusinessRules {
 			shelfRepository.save(shelf);
 			count -= quantityToAdd;
 		}
-
 		if (count > 0) {
 			throw new BusinessException(Messages.NO_EMPTY_SHELF);
 		}

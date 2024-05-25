@@ -13,6 +13,8 @@ public class GetAllOrderDetailsResponse {
 
 	private String productName;
 
+	private UUID productId;
+
 	private int quantity;
 
 	private double unitPrice;

@@ -2,6 +2,8 @@ package com.tobeto.dto.invoice;
 
 import java.util.UUID;
 
+import com.tobeto.entities.enums.Status;
+
 import lombok.Data;
 
 @Data
@@ -17,5 +19,5 @@ public class GetAllInvoiceResponse {
 
 	private String waybillDate;
 
-	private boolean status;
+	private Status status;
 }
